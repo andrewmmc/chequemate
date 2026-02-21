@@ -9,10 +9,16 @@ ChequeMate is a Hong Kong Cheque Amount Converter that converts numerical amount
 ## Commands
 
 ```bash
-npm run dev      # Start development server (localhost:3000)
-npm run build    # Build for production
-npm run start    # Start production server
-npm run lint     # Run ESLint
+npm run dev          # Start development server (localhost:3000)
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run lint:fix     # Run ESLint with auto-fix
+npm run typecheck    # Run TypeScript type checking
+npm run format       # Format code with Prettier
+npm run format:check # Check code formatting
+npm run test         # Run tests in watch mode
+npm run test:run     # Run tests once
 ```
 
 ## Architecture
@@ -35,7 +41,13 @@ Both functions:
 
 ### State Management
 
+- **LanguageContext** (`src/contexts/LanguageContext.tsx`): Manages locale state (zh-HK/en) with localStorage persistence. Provides `useLanguage()` hook for accessing and updating locale.
+
 - **useHistory hook** (`src/hooks/useHistory.ts`): Manages conversion history with localStorage persistence. Limits to 10 entries, deduplicates by amount.
+
+### Schema Validation
+
+- **amount schema** (`src/schemas/amount.ts`): Zod schema that validates and parses amount strings. Handles comma removal, numeric validation, range checking (0 to MAX_AMOUNT), and rounding to 2 decimal places.
 
 ### UI Components
 
@@ -45,4 +57,6 @@ All components are in `src/components/` and follow a simple presentational patte
 
 - Uses React 19 with babel-plugin-react-compiler
 - Tailwind CSS 4 with @tailwindcss/postcss
-- No test framework is currently configured
+- Vitest for testing with Testing Library
+- Husky for git hooks (pre-commit runs lint:fix and format)
+- URL parameter `?amount=` can pre-fill the amount for sharing

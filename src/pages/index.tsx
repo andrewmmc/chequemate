@@ -136,7 +136,7 @@ export default function Home() {
 
           {/* Cheque Preview */}
           <section className="mb-4 animate-fade-in-up delay-2">
-            <ChequePreview chinese={chineseText} english={englishText} amount={amount} />
+            <ChequePreview chinese={chineseText} english={englishText} />
           </section>
 
           {/* History */}

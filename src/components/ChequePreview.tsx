@@ -6,22 +6,14 @@ import { useChequeConversion } from '../hooks/useChequeConversion';
 interface ChequePreviewProps {
   chinese: string;
   english: string;
-  amount: number;
 }
 
-export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) {
+export function ChequePreview({ chinese, english }: ChequePreviewProps) {
   const t = useTranslations();
   const { chineseText: zeroChinese, englishText: zeroEnglish } = useChequeConversion(0);
 
-  const today = new Date().toLocaleDateString('en-HK', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-
   const currencyPrefix = t('chequePreview.currencyPrefix');
   const chinesePrefix = t('chequePreview.chinesePrefix');
-  const formattedAmount = amount > 0 ? `${currencyPrefix} ${amount.toFixed(2)}` : '';
 
   const displayChinese = chinese || zeroChinese;
   const displayEnglish = english || zeroEnglish;
@@ -31,21 +23,10 @@ export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) 
       {/* Header */}
       <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-900">{t('chequePreview.title')}</h3>
-        <span className="text-xs text-gray-400">{today}</span>
       </div>
 
       {/* Content */}
       <div className="p-5 space-y-4">
-        {/* Amount Display */}
-        <div className="text-center py-3 bg-gray-50 rounded-xl">
-          <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
-            {t('chequePreview.amount')}
-          </div>
-          <div className="text-3xl font-bold text-gray-900" style={{ letterSpacing: '-0.02em' }}>
-            {formattedAmount || `${currencyPrefix} 0.00`}
-          </div>
-        </div>
-
         {/* Chinese Section */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
