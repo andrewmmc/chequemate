@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 interface QuickAmountsProps {
   onSelect: (amount: number) => void;
@@ -15,18 +16,20 @@ const PRESETS = [
 ];
 
 export function QuickAmounts({ onSelect, currentValue }: QuickAmountsProps) {
+  const t = useTranslations();
+
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        快速選擇 Quick Amounts
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {t('quickAmounts.label')}
       </label>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {PRESETS.map((preset) => (
           <button
             key={preset.value}
             onClick={() => onSelect(preset.value)}
             className={`
-              px-4 py-2 rounded-lg text-sm font-medium transition-all
+              px-3 py-1.5 rounded-lg text-sm font-medium transition-all
               ${currentValue === preset.value
                 ? 'bg-blue-600 text-white shadow-md'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'

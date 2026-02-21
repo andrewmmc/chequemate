@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface ConversionResultProps {
   label: string;
@@ -8,6 +9,7 @@ interface ConversionResultProps {
 
 export function ConversionResult({ label, value, language }: ConversionResultProps) {
   const [copied, setCopied] = useState(false);
+  const t = useTranslations();
 
   const handleCopy = async () => {
     try {
@@ -35,7 +37,7 @@ export function ConversionResult({ label, value, language }: ConversionResultPro
             disabled:opacity-50 disabled:cursor-not-allowed
           `}
         >
-          {copied ? '已複製 Copied!' : '複製 Copy'}
+          {copied ? t('common.copied') : t('common.copy')}
         </button>
       </div>
       <p
@@ -45,7 +47,7 @@ export function ConversionResult({ label, value, language }: ConversionResultPro
           ${value ? 'text-gray-900' : 'text-gray-400'}
         `}
       >
-        {value || (language === 'chinese' ? '請輸入金額' : 'Enter an amount')}
+        {value || t('conversionResult.enterAmount')}
       </p>
     </div>
   );

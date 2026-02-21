@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 interface AmountInputProps {
   value: string;
@@ -7,6 +8,8 @@ interface AmountInputProps {
 }
 
 export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
+  const t = useTranslations();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
 
@@ -29,12 +32,12 @@ export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
     <div className="w-full">
       <label
         htmlFor="amount"
-        className="block text-sm font-medium text-gray-700 mb-2"
+        className="block text-sm font-medium text-gray-700 mb-1"
       >
-        金額 Amount (HKD)
+        {t('amountInput.label')}
       </label>
       <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
           $
         </span>
         <input
@@ -45,11 +48,11 @@ export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
           onChange={handleChange}
           onBlur={onBlur}
           placeholder="0.00"
-          className="w-full pl-8 pr-4 py-3 text-2xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+          className="w-full pl-7 pr-3 py-2 text-xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
         />
       </div>
       <p className="mt-1 text-xs text-gray-500">
-        最高金額 Maximum: HKD 99,999,999,999.99
+        {t('amountInput.maxHint')}
       </p>
     </div>
   );

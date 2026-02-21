@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from 'next-intl';
 import { HistoryEntry } from "../hooks/useHistory";
 
 interface HistoryListProps {
@@ -14,6 +15,8 @@ export function HistoryList({
   onRemove,
   onClear,
 }: HistoryListProps) {
+  const t = useTranslations();
+
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString("en-HK", {
@@ -25,20 +28,20 @@ export function HistoryList({
   return (
     <div className="w-full bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
-        <h3 className="text-sm font-medium text-gray-700">轉換記錄 History</h3>
+        <h3 className="text-sm font-medium text-gray-700">{t('history.title')}</h3>
         {history.length > 0 && (
           <button
             onClick={onClear}
             className="text-xs text-red-500 hover:text-red-700"
           >
-            清除 Clear
+            {t('history.clear')}
           </button>
         )}
       </div>
 
       {history.length === 0 ? (
         <div className="px-4 py-6 text-center text-sm text-gray-400">
-          暫無記錄 No history yet
+          {t('history.empty')}
         </div>
       ) : (
         <ul className="divide-y divide-gray-100 max-h-60 overflow-y-auto">

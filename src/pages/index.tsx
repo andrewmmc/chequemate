@@ -1,17 +1,27 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
+import { useTranslations } from 'next-intl';
 import { AmountInput } from '../components/AmountInput';
 import { QuickAmounts } from '../components/QuickAmounts';
 import { ChequePreview } from '../components/ChequePreview';
 import { HistoryList } from '../components/HistoryList';
+import { LocaleToggle } from '../components/LocaleToggle';
 import { numberToChinese } from '../utils/numberToChinese';
 import { numberToEnglish } from '../utils/numberToEnglish';
 import { useHistory } from '../hooks/useHistory';
 import { parseAmount } from '../schemas/amount';
 
-export default function Home() {
+type Locale = 'zh-HK' | 'en';
+
+interface HomeProps {
+  locale: Locale;
+  onLocaleChange: (locale: Locale) => void;
+}
+
+export default function Home({ locale, onLocaleChange }: HomeProps) {
   const router = useRouter();
+  const t = useTranslations();
   const [amount, setAmount] = useState<number>(0);
   const [inputValue, setInputValue] = useState<string>('');
   const [chineseText, setChineseText] = useState<string>('');
@@ -63,11 +73,11 @@ export default function Home() {
       setEnglishText(english);
       setError('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : '轉換錯誤 Conversion error');
+      setError(err instanceof Error ? err.message : t('home.conversionError'));
       setChineseText('');
       setEnglishText('');
     }
-  }, [amount]);
+  }, [amount, t]);
 
   // Debounced history addition
   useEffect(() => {
@@ -122,73 +132,66 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>香港支票金額轉換器 - ChequeMate</title>
+        <title>{locale === 'zh-HK' ? '香港支票金額轉換器 - ChequeMate' : 'Hong Kong Cheque Amount Converter - ChequeMate'}</title>
       </Head>
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            香港支票金額轉換器
+            {t('home.title')}
           </h1>
-          <p className="text-lg text-gray-600">
-            Hong Kong Cheque Amount Converter
-          </p>
+          <div className="flex justify-center">
+            <LocaleToggle locale={locale} onLocaleChange={onLocaleChange} />
+          </div>
         </header>
 
         {/* Main Content */}
         <main className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column */}
-          <div className="space-y-6">
-            {/* Amount Input */}
-            <section className="bg-white rounded-xl shadow-lg p-6 space-y-4">
-              <AmountInput
-                value={inputValue}
-                onChange={handleInputChange}
-                onBlur={handleInputBlur}
-              />
-              <hr className="border-gray-200" />
-              <QuickAmounts
-                onSelect={handlePresetSelect}
-                currentValue={amount}
-              />
-            </section>
+          {/* Amount Input */}
+          <section className="bg-white rounded-xl shadow-lg p-6">
+            <AmountInput
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+            />
+            <hr className="border-gray-200 my-3" />
+            <QuickAmounts
+              onSelect={handlePresetSelect}
+              currentValue={amount}
+            />
+          </section>
 
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error}
-              </div>
-            )}
+          {/* Cheque Preview - order-2 on mobile, right column on desktop */}
+          <section className="order-2 lg:order-none lg:row-span-2 lg:sticky lg:top-8 lg:self-start">
+            <ChequePreview
+              chinese={chineseText}
+              english={englishText}
+              amount={amount}
+            />
+          </section>
 
-            {/* History */}
-            <section>
-              <HistoryList
-                history={history}
-                onSelect={handleHistorySelect}
-                onRemove={removeFromHistory}
-                onClear={clearHistory}
-              />
-            </section>
-          </div>
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              {error}
+            </div>
+          )}
 
-          {/* Right Column */}
-          <div>
-            {/* Cheque Preview */}
-            <section className="lg:sticky lg:top-8">
-              <ChequePreview
-                chinese={chineseText}
-                english={englishText}
-                amount={amount}
-              />
-            </section>
-          </div>
+          {/* History - order-3 on mobile */}
+          <section className="order-3">
+            <HistoryList
+              history={history}
+              onSelect={handleHistorySelect}
+              onRemove={removeFromHistory}
+              onClear={clearHistory}
+            />
+          </section>
         </main>
 
         {/* Footer */}
-        <footer className="mt-12 text-center text-sm text-gray-500">
-          <p>支援金額最高達港幣玖佰玖拾玖億玖仟玖佰玖拾玖萬玖仟玖佰玖拾玖元玖角玖分</p>
-          <p>Supports amounts up to HKD 99,999,999,999.99</p>
+        <footer className="mt-12 text-center text-xs text-gray-400">
+          <p>{t('home.disclaimer')}</p>
         </footer>
       </div>
     </div>

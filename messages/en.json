@@ -1,0 +1,36 @@
+{
+  "common": {
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
+  "home": {
+    "title": "Hong Kong Cheque Amount Converter",
+    "conversionError": "Conversion error",
+    "disclaimer": "This application is for academic and educational purposes only, provided \"as is\" without any warranty. The developer shall not be liable for any loss or damage arising from the use of this application."
+  },
+  "amountInput": {
+    "label": "Amount (HKD)",
+    "maxHint": "Maximum: HKD 99,999,999,999.99"
+  },
+  "quickAmounts": {
+    "label": "Quick Amounts"
+  },
+  "chequePreview": {
+    "title": "Cheque Preview",
+    "bankName": "Bank Name",
+    "date": "Date",
+    "payee": "Payee",
+    "amount": "Amount",
+    "amountInChinese": "Amount in Chinese",
+    "amountInEnglish": "Amount in English",
+    "signature": "Signature"
+  },
+  "history": {
+    "title": "History",
+    "clear": "Clear",
+    "empty": "No history yet"
+  },
+  "conversionResult": {
+    "enterAmount": "Enter an amount"
+  }
+}

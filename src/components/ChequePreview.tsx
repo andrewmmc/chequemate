@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslations } from 'next-intl';
 
 interface ChequePreviewProps {
   chinese: string;
@@ -8,6 +9,7 @@ interface ChequePreviewProps {
 
 function CopyButton({ value, text }: { value: string; text: string }) {
   const [copied, setCopied] = useState(false);
+  const t = useTranslations();
 
   const handleCopy = async () => {
     try {
@@ -33,7 +35,7 @@ function CopyButton({ value, text }: { value: string; text: string }) {
         disabled:opacity-50 disabled:cursor-not-allowed
       `}
     >
-      {copied ? "已複製 Copied!" : text}
+      {copied ? t('common.copied') : text}
     </button>
   );
 }
@@ -43,6 +45,8 @@ export function ChequePreview({
   english,
   amount,
 }: ChequePreviewProps) {
+  const t = useTranslations();
+
   const today = new Date().toLocaleDateString("en-HK", {
     year: "numeric",
     month: "long",
@@ -55,16 +59,16 @@ export function ChequePreview({
     <div className="w-full bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border-2 border-amber-200 p-6 shadow-inner">
       <div className="text-center mb-4">
         <h3 className="text-lg font-bold text-amber-800">
-          支票預覽 Cheque Preview
+          {t('chequePreview.title')}
         </h3>
       </div>
 
       <div className="bg-white rounded border border-gray-300 p-4 space-y-4">
         {/* Bank name placeholder */}
         <div className="flex justify-between items-start">
-          <div className="text-gray-400 text-sm">銀行名稱 Bank Name</div>
+          <div className="text-gray-400 text-sm">{t('chequePreview.bankName')}</div>
           <div className="text-right">
-            <div className="text-xs text-gray-400 mb-1">日期 Date</div>
+            <div className="text-xs text-gray-400 mb-1">{t('chequePreview.date')}</div>
             <div className="text-sm text-gray-600 border-b border-gray-300 pb-1 min-w-[150px]">
               {today}
             </div>
@@ -73,7 +77,7 @@ export function ChequePreview({
 
         {/* Payee line */}
         <div>
-          <div className="text-xs text-gray-400 mb-1">收款人 Payee</div>
+          <div className="text-xs text-gray-400 mb-1">{t('chequePreview.payee')}</div>
           <div className="border-b border-gray-300 py-2 text-gray-400">
             ________________________
           </div>
@@ -82,7 +86,7 @@ export function ChequePreview({
         {/* Amount in figures */}
         <div className="flex justify-end">
           <div className="text-right">
-            <div className="text-xs text-gray-400 mb-1">金額 Amount</div>
+            <div className="text-xs text-gray-400 mb-1">{t('chequePreview.amount')}</div>
             <div className="font-mono text-lg font-bold text-gray-800 border-b-2 border-gray-400 pb-1 min-w-[120px]">
               {formattedAmount || "HKD 0.00"}
             </div>
@@ -93,11 +97,11 @@ export function ChequePreview({
         <div>
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-gray-400">
-              金額（中文）Amount in Chinese
+              {t('chequePreview.amountInChinese')}
             </span>
             <CopyButton
               value={chinese ? `港幣 ${chinese}` : ""}
-              text="複製 Copy"
+              text={t('common.copy')}
             />
           </div>
           <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-lg font-medium">
@@ -119,11 +123,11 @@ export function ChequePreview({
         <div>
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-gray-400">
-              金額（英文）Amount in English
+              {t('chequePreview.amountInEnglish')}
             </span>
             <CopyButton
               value={english ? `HKD ${english}` : ""}
-              text="複製 Copy"
+              text={t('common.copy')}
             />
           </div>
           <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-lg font-medium">
@@ -144,7 +148,7 @@ export function ChequePreview({
         {/* Signature line */}
         <div className="pt-4 flex justify-end">
           <div className="text-right">
-            <div className="text-xs text-gray-400 mb-1">簽署 Signature</div>
+            <div className="text-xs text-gray-400 mb-1">{t('chequePreview.signature')}</div>
             <div className="border-b border-gray-400 w-40 h-8"></div>
           </div>
         </div>

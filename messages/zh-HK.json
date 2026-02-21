@@ -1,0 +1,36 @@
+{
+  "common": {
+    "copy": "複製",
+    "copied": "已複製!"
+  },
+  "home": {
+    "title": "香港支票金額轉換器",
+    "conversionError": "轉換錯誤",
+    "disclaimer": "本應用程式僅供學術及教育用途，按「現狀」提供，不作任何保證。開發者不對因使用本應用程式而引致的任何損失或損害承擔責任。"
+  },
+  "amountInput": {
+    "label": "金額 (HKD)",
+    "maxHint": "最高金額: HKD 99,999,999,999.99"
+  },
+  "quickAmounts": {
+    "label": "快速選擇"
+  },
+  "chequePreview": {
+    "title": "支票預覽",
+    "bankName": "銀行名稱",
+    "date": "日期",
+    "payee": "收款人",
+    "amount": "金額",
+    "amountInChinese": "金額（中文）",
+    "amountInEnglish": "金額（英文）",
+    "signature": "簽署"
+  },
+  "history": {
+    "title": "轉換記錄",
+    "clear": "清除",
+    "empty": "暫無記錄"
+  },
+  "conversionResult": {
+    "enterAmount": "請輸入金額"
+  }
+}
