@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import { AmountInput } from '../components/AmountInput';
-import { ConversionResult } from '../components/ConversionResult';
-import { PresetButtons } from '../components/PresetButtons';
+import { QuickAmounts } from '../components/QuickAmounts';
 import { ChequePreview } from '../components/ChequePreview';
 import { HistoryList } from '../components/HistoryList';
 import { numberToChinese } from '../utils/numberToChinese';
@@ -112,8 +112,12 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100">
-      <div className="max-w-2xl mx-auto px-4 py-8">
+    <>
+      <Head>
+        <title>香港支票金額轉換器 - ChequeMate</title>
+      </Head>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}
         <header className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -125,60 +129,52 @@ export default function Home() {
         </header>
 
         {/* Main Content */}
-        <main className="space-y-6">
-          {/* Amount Input */}
-          <section className="bg-white rounded-xl shadow-lg p-6">
-            <AmountInput
-              value={inputValue}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-            />
-          </section>
+        <main className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column */}
+          <div className="space-y-6">
+            {/* Amount Input */}
+            <section className="bg-white rounded-xl shadow-lg p-6 space-y-4">
+              <AmountInput
+                value={inputValue}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+              />
+              <hr className="border-gray-200" />
+              <QuickAmounts
+                onSelect={handlePresetSelect}
+                currentValue={amount}
+              />
+            </section>
 
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-              {error}
-            </div>
-          )}
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
 
-          {/* Preset Buttons */}
-          <section>
-            <PresetButtons onSelect={handlePresetSelect} currentValue={amount} />
-          </section>
+            {/* History */}
+            <section>
+              <HistoryList
+                history={history}
+                onSelect={handleHistorySelect}
+                onRemove={removeFromHistory}
+                onClear={clearHistory}
+              />
+            </section>
+          </div>
 
-          {/* Conversion Results */}
-          <section className="space-y-4">
-            <ConversionResult
-              label="中文 Chinese"
-              value={chineseText}
-              language="chinese"
-            />
-            <ConversionResult
-              label="英文 English"
-              value={englishText}
-              language="english"
-            />
-          </section>
-
-          {/* Cheque Preview */}
-          <section>
-            <ChequePreview
-              chinese={chineseText}
-              english={englishText}
-              amount={amount}
-            />
-          </section>
-
-          {/* History */}
-          <section>
-            <HistoryList
-              history={history}
-              onSelect={handleHistorySelect}
-              onRemove={removeFromHistory}
-              onClear={clearHistory}
-            />
-          </section>
+          {/* Right Column */}
+          <div>
+            {/* Cheque Preview */}
+            <section className="lg:sticky lg:top-8">
+              <ChequePreview
+                chinese={chineseText}
+                english={englishText}
+                amount={amount}
+              />
+            </section>
+          </div>
         </main>
 
         {/* Footer */}
@@ -188,5 +184,6 @@ export default function Home() {
         </footer>
       </div>
     </div>
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface PresetButtonsProps {
+interface QuickAmountsProps {
   onSelect: (amount: number) => void;
   currentValue: number;
 }
@@ -14,7 +14,7 @@ const PRESETS = [
   { label: '$50,000', value: 50000 },
 ];
 
-export function PresetButtons({ onSelect, currentValue }: PresetButtonsProps) {
+export function QuickAmounts({ onSelect, currentValue }: QuickAmountsProps) {
   return (
     <div className="w-full">
       <label className="block text-sm font-medium text-gray-700 mb-2">

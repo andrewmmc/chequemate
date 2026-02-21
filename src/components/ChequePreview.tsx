@@ -1,9 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface ChequePreviewProps {
   chinese: string;
   english: string;
   amount: number;
+}
+
+function CopyButton({ value, text }: { value: string; text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      disabled={!value}
+      className={`
+        px-2 py-1 text-xs font-medium rounded transition-all
+        ${copied
+          ? 'bg-green-100 text-green-700'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+        }
+        disabled:opacity-50 disabled:cursor-not-allowed
+      `}
+    >
+      {copied ? '已複製 Copied!' : text}
+    </button>
+  );
 }
 
 export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) {
@@ -53,16 +84,22 @@ export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) 
 
         {/* Amount in words - Chinese */}
         <div>
-          <div className="text-xs text-gray-400 mb-1">金額（中文）Amount in Chinese</div>
-          <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-gray-400">金額（中文）Amount in Chinese</span>
+            <CopyButton value={chinese} text="複製 Copy" />
+          </div>
+          <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-lg font-medium">
             {chinese || '港幣________________元正'}
           </div>
         </div>
 
         {/* Amount in words - English */}
         <div>
-          <div className="text-xs text-gray-400 mb-1">金額（英文）Amount in English</div>
-          <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-sm">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-gray-400">金額（英文）Amount in English</span>
+            <CopyButton value={english} text="複製 Copy" />
+          </div>
+          <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-lg font-medium">
             {english || 'Hong Kong Dollars ________________ Only'}
           </div>
         </div>
