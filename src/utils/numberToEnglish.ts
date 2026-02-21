@@ -1,7 +1,7 @@
 /**
  * Hong Kong Cheque Amount Converter - English
  * Converts numerical amounts to English text format used on HK cheques
- * Format: Hong Kong Dollars [amount] And Cents [cents] Only
+ * Format: [Amount] Dollars and [Cents] Cents Only
  */
 
 const ONES = [
@@ -31,7 +31,7 @@ function convertLessThanHundred(num: number): string {
     return TENS[tens];
   }
 
-  return `${TENS[tens]} ${ONES[ones]}`;
+  return `${TENS[tens]}-${ONES[ones]}`;
 }
 
 /**
@@ -63,7 +63,7 @@ function convertLessThanThousand(num: number): string {
 
 /**
  * Converts a whole number to English words
- * Supports up to millions
+ * Supports up to billions
  */
 function convertWholeNumber(num: number): string {
   if (num === 0) {
@@ -115,12 +115,12 @@ function convertCents(cents: number): string {
     return TENS[tens];
   }
 
-  return `${TENS[tens]} ${ONES[ones]}`;
+  return `${TENS[tens]}-${ONES[ones]}`;
 }
 
 /**
  * Converts a numerical amount to English text for HK cheques
- * Format: Hong Kong Dollars [amount] And Cents [cents] Only
+ * Format: [Amount] Dollars and [Cents] Cents Only
  *
  * @param amount - The numerical amount (supports decimals)
  * @returns The amount in English text
@@ -128,7 +128,7 @@ function convertCents(cents: number): string {
 export function numberToEnglish(amount: number): string {
   // Handle edge cases
   if (amount === 0) {
-    return 'Hong Kong Dollars Zero Only';
+    return 'Zero Dollars Only';
   }
 
   if (amount < 0) {
@@ -144,16 +144,11 @@ export function numberToEnglish(amount: number): string {
   const dollars = Math.floor(roundedAmount);
   const cents = Math.round((roundedAmount - dollars) * 100);
 
-  let result = 'Hong Kong Dollars ';
-
-  // Convert dollars
-  if (dollars > 0) {
-    result += convertWholeNumber(dollars);
-  }
+  let result = convertWholeNumber(dollars) + ' Dollars';
 
   // Convert cents
   if (cents > 0) {
-    result += ' And Cents ' + convertCents(cents);
+    result += ' and ' + convertCents(cents) + ' Cents';
   }
 
   result += ' Only';

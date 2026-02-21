@@ -104,7 +104,7 @@ function convertCents(cents: number): string {
 
 /**
  * Converts a numerical amount to Traditional Chinese text for HK cheques
- * Format: 港幣[amount]元[cents]角[...]分 or 港幣[amount]元正
+ * Format: [amount]元[cents]角[...]分 or [amount]元正
  *
  * @param amount - The numerical amount (supports decimals)
  * @returns The amount in Traditional Chinese text
@@ -112,7 +112,7 @@ function convertCents(cents: number): string {
 export function numberToChinese(amount: number): string {
   // Handle edge cases
   if (amount === 0) {
-    return '港幣零元正';
+    return '零元正';
   }
 
   if (amount < 0) {
@@ -120,7 +120,7 @@ export function numberToChinese(amount: number): string {
   }
 
   if (amount > 99999999999.99) {
-    throw new Error('金額不能超過港幣玖佰玖拾玖億玖仟玖佰玖拾玖萬玖仟玖佰玖拾玖元玖角玖分');
+    throw new Error('金額不能超過玖佰玖拾玖億玖仟玖佰玖拾玖萬玖仟玖佰玖拾玖元玖角玖分');
   }
 
   // Round to 2 decimal places and split into dollars and cents
@@ -128,7 +128,7 @@ export function numberToChinese(amount: number): string {
   const dollars = Math.floor(roundedAmount);
   const cents = Math.round((roundedAmount - dollars) * 100);
 
-  let result = '港幣';
+  let result = '';
 
   // Convert dollars
   if (dollars > 0) {
