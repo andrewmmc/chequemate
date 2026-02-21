@@ -11,17 +11,12 @@ import { numberToChinese } from '../utils/numberToChinese';
 import { numberToEnglish } from '../utils/numberToEnglish';
 import { useHistory } from '../hooks/useHistory';
 import { parseAmount } from '../schemas/amount';
+import { useLanguage } from '../contexts/LanguageContext';
 
-type Locale = 'zh-HK' | 'en';
-
-interface HomeProps {
-  locale: Locale;
-  onLocaleChange: (locale: Locale) => void;
-}
-
-export default function Home({ locale, onLocaleChange }: HomeProps) {
+export default function Home() {
   const router = useRouter();
   const t = useTranslations();
+  const { locale } = useLanguage();
   const { history, addToHistory, removeFromHistory, clearHistory } = useHistory();
 
   // Get initial amount from URL
@@ -129,7 +124,7 @@ export default function Home({ locale, onLocaleChange }: HomeProps) {
           <header className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('home.title')}</h1>
             <div className="flex justify-center">
-              <LocaleToggle locale={locale} onLocaleChange={onLocaleChange} />
+              <LocaleToggle />
             </div>
           </header>
 
