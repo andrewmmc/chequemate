@@ -1,6 +1,13 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useSyncExternalStore,
+} from 'react';
 
 type Locale = 'zh-HK' | 'en';
 
@@ -18,9 +25,16 @@ function getInitialLocale(): Locale {
   return 'zh-HK';
 }
 
+const emptySubscribe = () => () => {};
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(() => getInitialLocale());
-  const [mounted] = useState(() => typeof window !== 'undefined');
+
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
     document.documentElement.lang = locale === 'zh-HK' ? 'zh-HK' : 'en';
