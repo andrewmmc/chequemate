@@ -16,9 +16,10 @@ export function LocaleToggle({ locale, onLocaleChange }: LocaleToggleProps) {
         onClick={() => onLocaleChange('zh-HK')}
         className={`
           px-3 py-1 text-sm font-medium rounded-md transition-all
-          ${locale === 'zh-HK'
-            ? 'bg-white text-gray-900 shadow-sm'
-            : 'text-gray-600 hover:text-gray-900'
+          ${
+            locale === 'zh-HK'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
           }
         `}
       >
@@ -28,9 +29,10 @@ export function LocaleToggle({ locale, onLocaleChange }: LocaleToggleProps) {
         onClick={() => onLocaleChange('en')}
         className={`
           px-3 py-1 text-sm font-medium rounded-md transition-all
-          ${locale === 'en'
-            ? 'bg-white text-gray-900 shadow-sm'
-            : 'text-gray-600 hover:text-gray-900'
+          ${
+            locale === 'en'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
           }
         `}
       >

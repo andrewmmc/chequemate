@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 import { useTranslations } from 'next-intl';
-import { HistoryEntry } from "../hooks/useHistory";
+import { HistoryEntry } from '../hooks/useHistory';
 
 interface HistoryListProps {
   history: HistoryEntry[];
@@ -9,19 +9,14 @@ interface HistoryListProps {
   onClear: () => void;
 }
 
-export function HistoryList({
-  history,
-  onSelect,
-  onRemove,
-  onClear,
-}: HistoryListProps) {
+export function HistoryList({ history, onSelect, onRemove, onClear }: HistoryListProps) {
   const t = useTranslations();
 
   const formatTime = (timestamp: number) => {
     const date = new Date(timestamp);
-    return date.toLocaleTimeString("en-HK", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return date.toLocaleTimeString('en-HK', {
+      hour: '2-digit',
+      minute: '2-digit',
     });
   };
 
@@ -30,19 +25,14 @@ export function HistoryList({
       <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
         <h3 className="text-sm font-medium text-gray-700">{t('history.title')}</h3>
         {history.length > 0 && (
-          <button
-            onClick={onClear}
-            className="text-xs text-red-500 hover:text-red-700"
-          >
+          <button onClick={onClear} className="text-xs text-red-500 hover:text-red-700">
             {t('history.clear')}
           </button>
         )}
       </div>
 
       {history.length === 0 ? (
-        <div className="px-4 py-6 text-center text-sm text-gray-400">
-          {t('history.empty')}
-        </div>
+        <div className="px-4 py-6 text-center text-sm text-gray-400">{t('history.empty')}</div>
       ) : (
         <ul className="divide-y divide-gray-100 max-h-60 overflow-y-auto">
           {history.map((entry) => (
@@ -55,14 +45,10 @@ export function HistoryList({
                 <div className="text-sm font-medium text-gray-900">
                   HKD {entry.amount.toFixed(2)}
                 </div>
-                <div className="text-xs text-gray-500 truncate">
-                  港幣 {entry.chinese}
-                </div>
+                <div className="text-xs text-gray-500 truncate">港幣 {entry.chinese}</div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-400">
-                  {formatTime(entry.timestamp)}
-                </span>
+                <span className="text-xs text-gray-400">{formatTime(entry.timestamp)}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();

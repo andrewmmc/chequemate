@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 export interface HistoryEntry {
   id: string;
@@ -41,12 +41,7 @@ function saveHistory(history: HistoryEntry[]): void {
 }
 
 export function useHistory() {
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
-
-  // Load history on mount
-  useEffect(() => {
-    setHistory(loadHistory());
-  }, []);
+  const [history, setHistory] = useState<HistoryEntry[]>(() => loadHistory());
 
   const addToHistory = useCallback((amount: number, chinese: string, english: string) => {
     const newEntry: HistoryEntry = {

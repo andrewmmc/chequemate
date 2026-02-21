@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useTranslations } from 'next-intl';
@@ -22,62 +22,47 @@ interface HomeProps {
 export default function Home({ locale, onLocaleChange }: HomeProps) {
   const router = useRouter();
   const t = useTranslations();
-  const [amount, setAmount] = useState<number>(0);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [chineseText, setChineseText] = useState<string>('');
-  const [englishText, setEnglishText] = useState<string>('');
-  const [error, setError] = useState<string>('');
   const { history, addToHistory, removeFromHistory, clearHistory } = useHistory();
 
-  // Read amount from URL params on initial load
-  useEffect(() => {
-    if (!router.isReady) return;
-
-    const validated = parseAmount(router.query.amount);
-    if (validated !== null) {
-      setAmount(validated);
-      setInputValue(validated.toString());
-      // Update URL with cleaned/rounded value
-      router.replace(`?amount=${validated}`, undefined, { shallow: true });
-    } else if (router.query.amount) {
-      // Clear invalid params from URL
-      router.replace('/', undefined, { shallow: true });
-    }
+  // Get initial amount from URL
+  const initialAmount = useMemo(() => {
+    if (!router.isReady) return 0;
+    return parseAmount(router.query.amount) ?? 0;
   }, [router.isReady, router.query.amount]);
 
-  // Update URL params when amount changes
-  const updateAmount = useCallback((newAmount: number) => {
-    setAmount(newAmount);
-    setInputValue(newAmount === 0 ? '' : newAmount.toString());
+  const [amount, setAmount] = useState<number>(() => initialAmount);
+  const [inputValue, setInputValue] = useState<string>(() =>
+    initialAmount === 0 ? '' : initialAmount.toString()
+  );
 
-    if (newAmount === 0) {
-      router.push('/', undefined, { shallow: true });
-    } else {
-      router.push(`?amount=${newAmount}`, undefined, { shallow: true });
-    }
-  }, [router]);
-
-  // Convert amount whenever it changes
-  useEffect(() => {
+  // Derived state - compute conversion from amount
+  const { chineseText, englishText, error } = useMemo(() => {
     if (amount === 0) {
-      setChineseText('');
-      setEnglishText('');
-      setError('');
-      return;
+      return { chineseText: '', englishText: '', error: '' };
     }
-
     try {
-      const chinese = numberToChinese(amount);
-      const english = numberToEnglish(amount);
-      setChineseText(chinese);
-      setEnglishText(english);
-      setError('');
+      return {
+        chineseText: numberToChinese(amount),
+        englishText: numberToEnglish(amount),
+        error: '',
+      };
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('home.conversionError'));
-      setChineseText('');
-      setEnglishText('');
+      return {
+        chineseText: '',
+        englishText: '',
+        error: err instanceof Error ? err.message : t('home.conversionError'),
+      };
     }
   }, [amount, t]);
+
+  // Sync URL with amount state
+  useEffect(() => {
+    if (amount === 0) {
+      router.replace('/', undefined, { shallow: true });
+    } else {
+      router.replace(`?amount=${amount}`, undefined, { shallow: true });
+    }
+  }, [amount, router]);
 
   // Debounced history addition
   useEffect(() => {
@@ -90,34 +75,34 @@ export default function Home({ locale, onLocaleChange }: HomeProps) {
     return () => clearTimeout(timeoutId);
   }, [amount, chineseText, englishText, addToHistory]);
 
+  // Update URL params when amount changes
+  const updateAmount = useCallback((newAmount: number) => {
+    setAmount(newAmount);
+    setInputValue(newAmount === 0 ? '' : newAmount.toString());
+  }, []);
+
   const handleInputChange = (value: string) => {
     setInputValue(value);
 
     if (value === '' || value === '.') {
       setAmount(0);
-      router.push('/', undefined, { shallow: true });
       return;
     }
 
     const validated = parseAmount(value);
     if (validated !== null) {
       setAmount(validated);
-      router.push(`?amount=${validated}`, undefined, { shallow: true });
     }
   };
 
   const handleInputBlur = () => {
-    // Format on blur
     if (inputValue === '' || inputValue === '.') {
       setInputValue('');
       setAmount(0);
-      router.push('/', undefined, { shallow: true });
     } else {
       const formatted = parseFloat(inputValue).toFixed(2);
       setInputValue(formatted);
-      const numValue = parseFloat(formatted);
-      setAmount(numValue);
-      router.push(`?amount=${numValue}`, undefined, { shallow: true });
+      setAmount(parseFloat(formatted));
     }
   };
 
@@ -132,69 +117,64 @@ export default function Home({ locale, onLocaleChange }: HomeProps) {
   return (
     <>
       <Head>
-        <title>{locale === 'zh-HK' ? '香港支票金額轉換器 - ChequeMate' : 'Hong Kong Cheque Amount Converter - ChequeMate'}</title>
+        <title>
+          {locale === 'zh-HK'
+            ? '香港支票金額轉換器 - ChequeMate'
+            : 'Hong Kong Cheque Amount Converter - ChequeMate'}
+        </title>
       </Head>
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header */}
-        <header className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {t('home.title')}
-          </h1>
-          <div className="flex justify-center">
-            <LocaleToggle locale={locale} onLocaleChange={onLocaleChange} />
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Amount Input */}
-          <section className="bg-white rounded-xl shadow-lg p-6">
-            <AmountInput
-              value={inputValue}
-              onChange={handleInputChange}
-              onBlur={handleInputBlur}
-            />
-            <hr className="border-gray-200 my-3" />
-            <QuickAmounts
-              onSelect={handlePresetSelect}
-              currentValue={amount}
-            />
-          </section>
-
-          {/* Cheque Preview - order-2 on mobile, right column on desktop */}
-          <section className="order-2 lg:order-none lg:row-span-2 lg:sticky lg:top-8 lg:self-start">
-            <ChequePreview
-              chinese={chineseText}
-              english={englishText}
-              amount={amount}
-            />
-          </section>
-
-          {/* Error Message */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-              {error}
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          {/* Header */}
+          <header className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('home.title')}</h1>
+            <div className="flex justify-center">
+              <LocaleToggle locale={locale} onLocaleChange={onLocaleChange} />
             </div>
-          )}
+          </header>
 
-          {/* History - order-3 on mobile */}
-          <section className="order-3">
-            <HistoryList
-              history={history}
-              onSelect={handleHistorySelect}
-              onRemove={removeFromHistory}
-              onClear={clearHistory}
-            />
-          </section>
-        </main>
+          {/* Main Content */}
+          <main className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Amount Input */}
+            <section className="bg-white rounded-xl shadow-lg p-6">
+              <AmountInput
+                value={inputValue}
+                onChange={handleInputChange}
+                onBlur={handleInputBlur}
+              />
+              <hr className="border-gray-200 my-3" />
+              <QuickAmounts onSelect={handlePresetSelect} currentValue={amount} />
+            </section>
 
-        {/* Footer */}
-        <footer className="mt-12 text-center text-xs text-gray-400">
-          <p>{t('home.disclaimer')}</p>
-        </footer>
+            {/* Cheque Preview - order-2 on mobile, right column on desktop */}
+            <section className="order-2 lg:order-none lg:row-span-2 lg:sticky lg:top-8 lg:self-start">
+              <ChequePreview chinese={chineseText} english={englishText} amount={amount} />
+            </section>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            {/* History - order-3 on mobile */}
+            <section className="order-3">
+              <HistoryList
+                history={history}
+                onSelect={handleHistorySelect}
+                onRemove={removeFromHistory}
+                onClear={clearHistory}
+              />
+            </section>
+          </main>
+
+          {/* Footer */}
+          <footer className="mt-12 text-center text-xs text-gray-400">
+            <p>{t('home.disclaimer')}</p>
+          </footer>
+        </div>
       </div>
-    </div>
     </>
   );
 }

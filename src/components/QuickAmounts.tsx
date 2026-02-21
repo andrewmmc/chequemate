@@ -30,9 +30,10 @@ export function QuickAmounts({ onSelect, currentValue }: QuickAmountsProps) {
             onClick={() => onSelect(preset.value)}
             className={`
               px-3 py-1.5 rounded-lg text-sm font-medium transition-all
-              ${currentValue === preset.value
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ${
+                currentValue === preset.value
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }
             `}
           >

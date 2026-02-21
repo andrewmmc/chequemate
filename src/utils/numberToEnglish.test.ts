@@ -48,20 +48,20 @@ describe('numberToEnglish', () => {
 
   describe('cents handling', () => {
     it('converts amounts with cents only', () => {
-      expect(numberToEnglish(0.50)).toBe('Zero Dollars and Fifty Cents Only');
+      expect(numberToEnglish(0.5)).toBe('Zero Dollars and Fifty Cents Only');
       expect(numberToEnglish(0.01)).toBe('Zero Dollars and One Cents Only');
       expect(numberToEnglish(0.99)).toBe('Zero Dollars and Ninety-Nine Cents Only');
     });
 
     it('converts amounts with dollars and cents', () => {
-      expect(numberToEnglish(1.50)).toBe('One Dollars and Fifty Cents Only');
+      expect(numberToEnglish(1.5)).toBe('One Dollars and Fifty Cents Only');
       expect(numberToEnglish(10.25)).toBe('Ten Dollars and Twenty-Five Cents Only');
       expect(numberToEnglish(100.01)).toBe('One Hundred Dollars and One Cents Only');
     });
 
     it('converts example amounts from user', () => {
       expect(numberToEnglish(10000)).toBe('Ten Thousand Dollars Only');
-      expect(numberToEnglish(10000.30)).toBe('Ten Thousand Dollars and Thirty Cents Only');
+      expect(numberToEnglish(10000.3)).toBe('Ten Thousand Dollars and Thirty Cents Only');
       expect(numberToEnglish(10000.31)).toBe('Ten Thousand Dollars and Thirty-One Cents Only');
     });
 
@@ -84,7 +84,9 @@ describe('numberToEnglish', () => {
 
     it('converts maximum amount', () => {
       const result = numberToEnglish(99999999999.99);
-      expect(result).toBe('Ninety-Nine Billion Nine Hundred Ninety-Nine Million Nine Hundred Ninety-Nine Thousand Nine Hundred Ninety-Nine Dollars and Ninety-Nine Cents Only');
+      expect(result).toBe(
+        'Ninety-Nine Billion Nine Hundred Ninety-Nine Million Nine Hundred Ninety-Nine Thousand Nine Hundred Ninety-Nine Dollars and Ninety-Nine Cents Only'
+      );
     });
   });
 
@@ -94,7 +96,9 @@ describe('numberToEnglish', () => {
     });
 
     it('throws error for amounts exceeding maximum', () => {
-      expect(() => numberToEnglish(100000000000)).toThrow('Amount cannot exceed HKD 99,999,999,999.99');
+      expect(() => numberToEnglish(100000000000)).toThrow(
+        'Amount cannot exceed HKD 99,999,999,999.99'
+      );
     });
 
     it('handles floating point precision', () => {

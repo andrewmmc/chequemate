@@ -30,9 +30,8 @@ export function ConversionResult({ label, value, language }: ConversionResultPro
           disabled={!value}
           className={`
             px-3 py-1 text-xs font-medium rounded-md transition-all
-            ${copied
-              ? 'bg-green-100 text-green-700'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            ${
+              copied ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }
             disabled:opacity-50 disabled:cursor-not-allowed
           `}

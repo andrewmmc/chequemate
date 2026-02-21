@@ -42,13 +42,13 @@ describe('numberToChinese', () => {
 
   describe('cents handling', () => {
     it('converts amounts with cents only', () => {
-      expect(numberToChinese(0.50)).toBe('零元伍角');
+      expect(numberToChinese(0.5)).toBe('零元伍角');
       expect(numberToChinese(0.01)).toBe('零元零角壹分');
       expect(numberToChinese(0.99)).toBe('零元玖角玖分');
     });
 
     it('converts amounts with dollars and cents', () => {
-      expect(numberToChinese(1.50)).toBe('壹元伍角');
+      expect(numberToChinese(1.5)).toBe('壹元伍角');
       expect(numberToChinese(10.25)).toBe('壹拾元貳角伍分');
       expect(numberToChinese(100.01)).toBe('壹佰元零角壹分');
     });
@@ -71,7 +71,9 @@ describe('numberToChinese', () => {
     });
 
     it('converts maximum amount', () => {
-      expect(numberToChinese(99999999999.99)).toBe('玖佰玖拾玖億玖仟玖佰玖拾玖萬玖仟玖佰玖拾玖元玖角玖分');
+      expect(numberToChinese(99999999999.99)).toBe(
+        '玖佰玖拾玖億玖仟玖佰玖拾玖萬玖仟玖佰玖拾玖元玖角玖分'
+      );
     });
   });
 
