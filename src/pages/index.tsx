@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { AmountInput } from '../components/AmountInput';
 import { ConversionResult } from '../components/ConversionResult';
 import { PresetButtons } from '../components/PresetButtons';
@@ -7,13 +8,44 @@ import { HistoryList } from '../components/HistoryList';
 import { numberToChinese } from '../utils/numberToChinese';
 import { numberToEnglish } from '../utils/numberToEnglish';
 import { useHistory } from '../hooks/useHistory';
+import { parseAmount } from '../schemas/amount';
 
 export default function Home() {
+  const router = useRouter();
   const [amount, setAmount] = useState<number>(0);
+  const [inputValue, setInputValue] = useState<string>('');
   const [chineseText, setChineseText] = useState<string>('');
   const [englishText, setEnglishText] = useState<string>('');
   const [error, setError] = useState<string>('');
   const { history, addToHistory, removeFromHistory, clearHistory } = useHistory();
+
+  // Read amount from URL params on initial load
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const validated = parseAmount(router.query.amount);
+    if (validated !== null) {
+      setAmount(validated);
+      setInputValue(validated.toString());
+      // Update URL with cleaned/rounded value
+      router.replace(`?amount=${validated}`, undefined, { shallow: true });
+    } else if (router.query.amount) {
+      // Clear invalid params from URL
+      router.replace('/', undefined, { shallow: true });
+    }
+  }, [router.isReady, router.query.amount]);
+
+  // Update URL params when amount changes
+  const updateAmount = useCallback((newAmount: number) => {
+    setAmount(newAmount);
+    setInputValue(newAmount === 0 ? '' : newAmount.toString());
+
+    if (newAmount === 0) {
+      router.push('/', undefined, { shallow: true });
+    } else {
+      router.push(`?amount=${newAmount}`, undefined, { shallow: true });
+    }
+  }, [router]);
 
   // Convert amount whenever it changes
   useEffect(() => {
@@ -40,12 +72,43 @@ export default function Home() {
     }
   }, [amount, addToHistory]);
 
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+
+    if (value === '' || value === '.') {
+      setAmount(0);
+      router.push('/', undefined, { shallow: true });
+      return;
+    }
+
+    const validated = parseAmount(value);
+    if (validated !== null) {
+      setAmount(validated);
+      router.push(`?amount=${validated}`, undefined, { shallow: true });
+    }
+  };
+
+  const handleInputBlur = () => {
+    // Format on blur
+    if (inputValue === '' || inputValue === '.') {
+      setInputValue('');
+      setAmount(0);
+      router.push('/', undefined, { shallow: true });
+    } else {
+      const formatted = parseFloat(inputValue).toFixed(2);
+      setInputValue(formatted);
+      const numValue = parseFloat(formatted);
+      setAmount(numValue);
+      router.push(`?amount=${numValue}`, undefined, { shallow: true });
+    }
+  };
+
   const handlePresetSelect = (value: number) => {
-    setAmount(value);
+    updateAmount(value);
   };
 
   const handleHistorySelect = (value: number) => {
-    setAmount(value);
+    updateAmount(value);
   };
 
   return (
@@ -65,7 +128,11 @@ export default function Home() {
         <main className="space-y-6">
           {/* Amount Input */}
           <section className="bg-white rounded-xl shadow-lg p-6">
-            <AmountInput value={amount} onChange={setAmount} />
+            <AmountInput
+              value={inputValue}
+              onChange={handleInputChange}
+              onBlur={handleInputBlur}
+            />
           </section>
 
           {/* Error Message */}

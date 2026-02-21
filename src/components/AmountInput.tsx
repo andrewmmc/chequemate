@@ -1,27 +1,18 @@
 import React from 'react';
 
 interface AmountInputProps {
-  value: number;
-  onChange: (value: number) => void;
-  max?: number;
-  min?: number;
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
 }
 
-export function AmountInput({
-  value,
-  onChange,
-  max = 99999999999.99,
-  min = 0,
-}: AmountInputProps) {
-  const [displayValue, setDisplayValue] = React.useState(value === 0 ? '' : value.toString());
-
+export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
 
     // Allow empty input
     if (inputValue === '') {
-      setDisplayValue('');
-      onChange(0);
+      onChange('');
       return;
     }
 
@@ -31,29 +22,7 @@ export function AmountInput({
       return;
     }
 
-    // Parse and validate range
-    const numValue = parseFloat(inputValue);
-
-    if (!isNaN(numValue)) {
-      if (numValue < min || numValue > max) {
-        return;
-      }
-      onChange(numValue);
-    }
-
-    setDisplayValue(inputValue);
-  };
-
-  const handleBlur = () => {
-    // Format the display value on blur
-    if (displayValue === '' || parseFloat(displayValue) === 0) {
-      setDisplayValue('');
-      onChange(0);
-    } else {
-      const formatted = parseFloat(displayValue).toFixed(2);
-      setDisplayValue(formatted);
-      onChange(parseFloat(formatted));
-    }
+    onChange(inputValue);
   };
 
   return (
@@ -72,9 +41,9 @@ export function AmountInput({
           id="amount"
           type="text"
           inputMode="decimal"
-          value={displayValue}
+          value={value}
           onChange={handleChange}
-          onBlur={handleBlur}
+          onBlur={onBlur}
           placeholder="0.00"
           className="w-full pl-8 pr-4 py-3 text-2xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
         />
