@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useTranslations } from 'next-intl';
@@ -26,6 +26,14 @@ export default function Home() {
     amount,
     t('home.conversionError')
   );
+  const hasHydratedFromUrlRef = useRef(false);
+
+  useEffect(() => {
+    if (!router.isReady || hasHydratedFromUrlRef.current) return;
+
+    hasHydratedFromUrlRef.current = true;
+    updateAmount(initialAmount);
+  }, [router.isReady, initialAmount, updateAmount]);
 
   // Debounced history addition
   useEffect(() => {

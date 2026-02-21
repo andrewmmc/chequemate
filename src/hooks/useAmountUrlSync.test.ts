@@ -45,15 +45,33 @@ describe('useInitialAmountFromUrl', () => {
 });
 
 describe('useAmountUrlSync', () => {
-  it('replaces with root when amount is 0', () => {
-    const router = createRouter();
+  it('replaces without amount query when amount is 0', () => {
+    const router = createRouter({ query: { amount: '100' } });
     renderHook(() => useAmountUrlSync(router, 0));
-    expect(router.replace).toHaveBeenCalledWith('/', undefined, { shallow: true });
+    expect(router.replace).toHaveBeenCalledWith({ pathname: '/', query: {} }, undefined, {
+      shallow: true,
+    });
   });
 
   it('replaces with amount query when amount is non-zero', () => {
     const router = createRouter();
     renderHook(() => useAmountUrlSync(router, 100));
-    expect(router.replace).toHaveBeenCalledWith('?amount=100', undefined, { shallow: true });
+    expect(router.replace).toHaveBeenCalledWith(
+      { pathname: '/', query: { amount: '100' } },
+      undefined,
+      { shallow: true }
+    );
+  });
+
+  it('does not replace when router is not ready', () => {
+    const router = createRouter({ isReady: false });
+    renderHook(() => useAmountUrlSync(router, 100));
+    expect(router.replace).not.toHaveBeenCalled();
+  });
+
+  it('does not replace when query is already synced', () => {
+    const router = createRouter({ query: { amount: '100' } });
+    renderHook(() => useAmountUrlSync(router, 100));
+    expect(router.replace).not.toHaveBeenCalled();
   });
 });

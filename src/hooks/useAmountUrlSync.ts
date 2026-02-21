@@ -11,10 +11,25 @@ export function useInitialAmountFromUrl(router: NextRouter) {
 
 export function useAmountUrlSync(router: NextRouter, amount: number) {
   useEffect(() => {
+    if (!router.isReady) return;
+
+    const currentAmount = parseAmount(router.query.amount) ?? 0;
+    if (currentAmount === amount) return;
+
+    const nextQuery = { ...router.query };
     if (amount === 0) {
-      router.replace('/', undefined, { shallow: true });
+      delete nextQuery.amount;
     } else {
-      router.replace(`?amount=${amount}`, undefined, { shallow: true });
+      nextQuery.amount = amount.toString();
     }
+
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: nextQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
   }, [amount, router]);
 }

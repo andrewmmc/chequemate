@@ -86,7 +86,11 @@ describe('Home page flows', () => {
     const input = screen.getByLabelText('amountInput.label');
     fireEvent.change(input, { target: { value: '100' } });
 
-    expect(router.replace).toHaveBeenCalledWith('?amount=100', undefined, { shallow: true });
+    expect(router.replace).toHaveBeenCalledWith(
+      { pathname: '/', query: { amount: '100' } },
+      undefined,
+      { shallow: true }
+    );
 
     act(() => {
       vi.advanceTimersByTime(500);
@@ -114,9 +118,27 @@ describe('Home page flows', () => {
     render(<Home />);
 
     fireEvent.click(screen.getByRole('button', { name: '$100' }));
-    expect(router.replace).toHaveBeenCalledWith('?amount=100', undefined, { shallow: true });
+    expect(router.replace).toHaveBeenCalledWith(
+      { pathname: '/', query: { amount: '100' } },
+      undefined,
+      { shallow: true }
+    );
 
     fireEvent.click(screen.getByText('HKD 200.00'));
-    expect(router.replace).toHaveBeenCalledWith('?amount=200', undefined, { shallow: true });
+    expect(router.replace).toHaveBeenCalledWith(
+      { pathname: '/', query: { amount: '200' } },
+      undefined,
+      { shallow: true }
+    );
+  });
+
+  it('hydrates input from amount query once router is ready', () => {
+    const router = createRouter({ query: { amount: '1000.5' }, isReady: true });
+    mockUseRouter.mockReturnValue(router);
+
+    render(<Home />);
+
+    const input = screen.getByLabelText('amountInput.label') as HTMLInputElement;
+    expect(input.value).toBe('1000.5');
   });
 });
