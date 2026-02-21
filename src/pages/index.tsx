@@ -54,56 +54,104 @@ export default function Home() {
             ? '香港支票金額轉換器 - ChequeMate'
             : 'Hong Kong Cheque Amount Converter - ChequeMate'}
         </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </Head>
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100">
-        <div className="max-w-6xl mx-auto px-4 py-8">
-          {/* Header */}
-          <header className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('home.title')}</h1>
-            <div className="flex justify-center">
-              <LocaleToggle />
+      <div className="min-h-screen" style={{ background: '#f2f2f7' }}>
+        {/* Header */}
+        <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-gray-200/50">
+          <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div
+                className="w-8 h-8 rounded-xl flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, #007aff 0%, #5856d6 100%)' }}
+              >
+                <svg
+                  className="w-4.5 h-4.5 text-white"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <h1 className="text-lg font-semibold text-gray-900 tracking-tight">ChequeMate</h1>
             </div>
-          </header>
+            <LocaleToggle />
+          </div>
+        </header>
 
-          {/* Main Content */}
-          <main className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Amount Input */}
-            <section className="bg-white rounded-xl shadow-lg p-6">
+        <div className="max-w-2xl mx-auto px-4 py-6 pb-20">
+          {/* Page Title */}
+          <div className="mb-6 animate-fade-in-up">
+            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">{t('home.title')}</h2>
+            <p className="text-sm text-gray-500 mt-1">
+              {locale === 'zh-HK'
+                ? '輸入金額，自動轉換為中英文大寫'
+                : 'Enter amount to convert to Chinese & English words'}
+            </p>
+          </div>
+
+          {/* Amount Input Card */}
+          <section className="ios-card mb-4 overflow-hidden animate-fade-in-up delay-1">
+            <div className="p-5">
               <AmountInput
                 value={inputValue}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
               />
-              <hr className="border-gray-200 my-3" />
+            </div>
+            <div className="border-t border-gray-100 p-5 pt-4">
               <QuickAmounts onSelect={handlePresetSelect} currentValue={amount} />
-            </section>
+            </div>
+          </section>
 
-            {/* Cheque Preview - order-2 on mobile, right column on desktop */}
-            <section className="order-2 lg:order-none lg:row-span-2 lg:sticky lg:top-8 lg:self-start">
-              <ChequePreview chinese={chineseText} english={englishText} amount={amount} />
-            </section>
-
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-                {error}
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-4 rounded-2xl bg-red-50 border border-red-100 animate-scale-in">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                  <svg
+                    className="w-4 h-4 text-red-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <p className="text-sm font-medium text-red-700">{error}</p>
               </div>
-            )}
+            </div>
+          )}
 
-            {/* History - order-3 on mobile */}
-            <section className="order-3">
-              <HistoryList
-                history={history}
-                onSelect={handleHistorySelect}
-                onRemove={removeFromHistory}
-                onClear={clearHistory}
-              />
-            </section>
-          </main>
+          {/* Cheque Preview */}
+          <section className="mb-4 animate-fade-in-up delay-2">
+            <ChequePreview chinese={chineseText} english={englishText} amount={amount} />
+          </section>
+
+          {/* History */}
+          <section className="animate-fade-in-up delay-3">
+            <HistoryList
+              history={history}
+              onSelect={handleHistorySelect}
+              onRemove={removeFromHistory}
+              onClear={clearHistory}
+            />
+          </section>
 
           {/* Footer */}
-          <footer className="mt-12 text-center text-xs text-gray-400">
-            <p>{t('home.disclaimer')}</p>
+          <footer className="mt-8 text-center">
+            <p className="text-xs text-gray-400 leading-relaxed">{t('home.disclaimer')}</p>
           </footer>
         </div>
       </div>

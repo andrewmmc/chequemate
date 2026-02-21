@@ -23,89 +23,64 @@ export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) 
   const chinesePrefix = t('chequePreview.chinesePrefix');
   const formattedAmount = amount > 0 ? `${currencyPrefix} ${amount.toFixed(2)}` : '';
 
+  const displayChinese = chinese || zeroChinese;
+  const displayEnglish = english || zeroEnglish;
+
   return (
-    <div className="w-full bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border-2 border-amber-200 p-6 shadow-inner">
-      <div className="text-center mb-4">
-        <h3 className="text-lg font-bold text-amber-800">{t('chequePreview.title')}</h3>
+    <div className="ios-card overflow-hidden">
+      {/* Header */}
+      <div className="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-900">{t('chequePreview.title')}</h3>
+        <span className="text-xs text-gray-400">{today}</span>
       </div>
 
-      <div className="bg-white rounded border border-gray-300 p-4 space-y-4">
-        {/* Bank name placeholder */}
-        <div className="flex justify-between items-start">
-          <div className="text-gray-400 text-sm">{t('chequePreview.bankName')}</div>
-          <div className="text-right">
-            <div className="text-xs text-gray-400 mb-1">{t('chequePreview.date')}</div>
-            <div className="text-sm text-gray-600 border-b border-gray-300 pb-1 min-w-[150px]">
-              {today}
+      {/* Content */}
+      <div className="p-5 space-y-4">
+        {/* Amount Display */}
+        <div className="text-center py-3 bg-gray-50 rounded-xl">
+          <div className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">
+            {t('chequePreview.amount')}
+          </div>
+          <div className="text-3xl font-bold text-gray-900" style={{ letterSpacing: '-0.02em' }}>
+            {formattedAmount || `${currencyPrefix} 0.00`}
+          </div>
+        </div>
+
+        {/* Chinese Section */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-red-50 text-red-600 text-xs font-medium">
+                中文
+              </span>
+              <span className="text-xs text-gray-500">{t('chequePreview.amountInChinese')}</span>
             </div>
-          </div>
-        </div>
-
-        {/* Payee line */}
-        <div>
-          <div className="text-xs text-gray-400 mb-1">{t('chequePreview.payee')}</div>
-          <div className="border-b border-gray-300 py-2 text-gray-400">
-            ________________________
-          </div>
-        </div>
-
-        {/* Amount in figures */}
-        <div className="flex justify-end">
-          <div className="text-right">
-            <div className="text-xs text-gray-400 mb-1">{t('chequePreview.amount')}</div>
-            <div className="font-mono text-lg font-bold text-gray-800 border-b-2 border-gray-400 pb-1 min-w-[120px]">
-              {formattedAmount || `${currencyPrefix} 0.00`}
-            </div>
-          </div>
-        </div>
-
-        {/* Amount in words - Chinese */}
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-gray-400">{t('chequePreview.amountInChinese')}</span>
             <CopyButton value={chinese ? `${chinesePrefix} ${chinese}` : ''} />
           </div>
-          <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-lg font-medium">
-            {chinese ? (
-              <>
-                <span className="text-sm text-gray-500 mr-1">{chinesePrefix}</span>
-                {chinese}
-              </>
-            ) : (
-              <>
-                <span className="text-sm text-gray-500 mr-1">{chinesePrefix}</span>
-                {zeroChinese}
-              </>
-            )}
+          <div className="p-4 bg-gray-50 rounded-xl min-h-[56px] flex items-center">
+            <p className="text-base text-gray-900 leading-relaxed break-all">
+              <span className="text-gray-400 mr-1">{chinesePrefix}</span>
+              {displayChinese}
+            </p>
           </div>
         </div>
 
-        {/* Amount in words - English */}
-        <div>
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs text-gray-400">{t('chequePreview.amountInEnglish')}</span>
+        {/* English Section */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 text-xs font-medium">
+                EN
+              </span>
+              <span className="text-xs text-gray-500">{t('chequePreview.amountInEnglish')}</span>
+            </div>
             <CopyButton value={english ? `${currencyPrefix} ${english}` : ''} />
           </div>
-          <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-lg font-medium">
-            {english ? (
-              <>
-                <span className="text-sm text-gray-500 mr-1">{currencyPrefix}</span>
-                {english}
-              </>
-            ) : (
-              <>
-                <span className="text-sm text-gray-500 mr-1">{currencyPrefix}</span>
-                {zeroEnglish}
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Signature line */}
-        <div className="pt-4 flex justify-end">
-          <div className="text-right">
-            <div className="text-xs text-gray-400 mb-1">{t('chequePreview.signature')}</div>
-            <div className="border-b border-gray-400 w-40 h-8"></div>
+          <div className="p-4 bg-gray-50 rounded-xl min-h-[56px] flex items-center">
+            <p className="text-base text-gray-900 leading-relaxed break-all">
+              <span className="text-gray-400 mr-1">{currencyPrefix}</span>
+              {displayEnglish}
+            </p>
           </div>
         </div>
       </div>
