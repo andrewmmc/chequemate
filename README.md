@@ -32,7 +32,6 @@ src/
 ├── components/
 │   ├── AmountInput.tsx      # Number input component
 │   ├── ChequePreview.tsx    # Cheque preview display
-│   ├── ConversionResult.tsx # Conversion result display
 │   ├── HistoryList.tsx      # Conversion history list
 │   ├── QuickAmounts.tsx     # Preset amount buttons
 │   ├── CopyButton.tsx       # Reusable copy-to-clipboard button
