@@ -62,15 +62,23 @@ export default function Home() {
       setChineseText(chinese);
       setEnglishText(english);
       setError('');
-
-      // Add to history
-      addToHistory(amount, chinese, english);
     } catch (err) {
       setError(err instanceof Error ? err.message : '轉換錯誤 Conversion error');
       setChineseText('');
       setEnglishText('');
     }
-  }, [amount, addToHistory]);
+  }, [amount]);
+
+  // Debounced history addition
+  useEffect(() => {
+    if (amount === 0 || !chineseText || !englishText) return;
+
+    const timeoutId = setTimeout(() => {
+      addToHistory(amount, chineseText, englishText);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [amount, chineseText, englishText, addToHistory]);
 
   const handleInputChange = (value: string) => {
     setInputValue(value);
