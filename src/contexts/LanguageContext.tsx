@@ -8,6 +8,7 @@ import {
   ReactNode,
   useSyncExternalStore,
 } from 'react';
+import { getStorageItem, setStorageItem } from '../utils/storage';
 
 type Locale = 'zh-HK' | 'en';
 
@@ -19,8 +20,7 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 function getInitialLocale(): Locale {
-  if (typeof window === 'undefined') return 'zh-HK';
-  const saved = localStorage.getItem('chequemate-locale') as Locale | null;
+  const saved = getStorageItem('chequemate-locale') as Locale | null;
   if (saved === 'zh-HK' || saved === 'en') return saved;
   return 'zh-HK';
 }
@@ -42,7 +42,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
-    localStorage.setItem('chequemate-locale', newLocale);
+    setStorageItem('chequemate-locale', newLocale);
   };
 
   if (!mounted) {

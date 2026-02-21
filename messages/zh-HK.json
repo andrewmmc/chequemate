@@ -23,7 +23,9 @@
     "amount": "金額",
     "amountInChinese": "金額（中文）",
     "amountInEnglish": "金額（英文）",
-    "signature": "簽署"
+    "signature": "簽署",
+    "currencyPrefix": "HKD",
+    "chinesePrefix": "港幣"
   },
   "history": {
     "title": "轉換記錄",

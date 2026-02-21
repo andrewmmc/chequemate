@@ -23,7 +23,9 @@
     "amount": "Amount",
     "amountInChinese": "Amount in Chinese",
     "amountInEnglish": "Amount in English",
-    "signature": "Signature"
+    "signature": "Signature",
+    "currencyPrefix": "HKD",
+    "chinesePrefix": "港幣"
   },
   "history": {
     "title": "History",

@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { getStorageJson, setStorageJson } from '../utils/storage';
 
 export interface HistoryEntry {
   id: string;
@@ -12,32 +13,11 @@ const STORAGE_KEY = 'cheque-converter-history';
 const MAX_HISTORY_SIZE = 10;
 
 function loadHistory(): HistoryEntry[] {
-  if (typeof window === 'undefined') {
-    return [];
-  }
-
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      return JSON.parse(stored);
-    }
-  } catch (error) {
-    console.error('Failed to load history:', error);
-  }
-
-  return [];
+  return getStorageJson<HistoryEntry[]>(STORAGE_KEY, []);
 }
 
 function saveHistory(history: HistoryEntry[]): void {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-  } catch (error) {
-    console.error('Failed to save history:', error);
-  }
+  setStorageJson(STORAGE_KEY, history);
 }
 
 export function useHistory() {

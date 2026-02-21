@@ -3,6 +3,7 @@
  * Converts numerical amounts to English text format used on HK cheques
  * Format: [Amount] Dollars and [Cents] Cents Only
  */
+import { MAX_AMOUNT, splitAmount } from '../domain/amount';
 
 const ONES = [
   '',
@@ -150,14 +151,11 @@ export function numberToEnglish(amount: number): string {
     throw new Error('Amount cannot be negative');
   }
 
-  if (amount > 99999999999.99) {
+  if (amount > MAX_AMOUNT) {
     throw new Error('Amount cannot exceed HKD 99,999,999,999.99');
   }
 
-  // Round to 2 decimal places and split into dollars and cents
-  const roundedAmount = Math.round(amount * 100) / 100;
-  const dollars = Math.floor(roundedAmount);
-  const cents = Math.round((roundedAmount - dollars) * 100);
+  const { dollars, cents } = splitAmount(amount);
 
   let result = convertWholeNumber(dollars) + ' Dollars';
 

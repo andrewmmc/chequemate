@@ -27,12 +27,20 @@ src/
 │   ├── ChequePreview.tsx    # Cheque preview display
 │   ├── ConversionResult.tsx # Conversion result display
 │   ├── HistoryList.tsx      # Conversion history list
-│   └── PresetButtons.tsx    # Preset amount buttons
+│   ├── QuickAmounts.tsx     # Preset amount buttons
+│   └── CopyButton.tsx       # Reusable copy-to-clipboard button
+├── domain/
+│   └── amount.ts            # Shared amount constraints/rounding helpers
 ├── hooks/
-│   └── useHistory.ts        # History management hook
+│   ├── useHistory.ts        # History management hook
+│   ├── useAmountInputState.ts
+│   ├── useAmountUrlSync.ts
+│   ├── useChequeConversion.ts
+│   └── useClipboard.ts
 ├── utils/
 │   ├── numberToChinese.ts   # Chinese number converter
-│   └── numberToEnglish.ts   # English number converter
+│   ├── numberToEnglish.ts   # English number converter
+│   └── storage.ts           # localStorage access utilities
 └── pages/
     └── index.tsx            # Main page
 ```
@@ -59,6 +67,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `npm run build` - Build for production
 - `npm run start` - Start production server
 - `npm run lint` - Run ESLint
+- `npm run typecheck` - Run TypeScript type checking
+- `npm run test:run` - Run tests once with Vitest
 
 ## License
 

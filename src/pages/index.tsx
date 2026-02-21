@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { useTranslations } from 'next-intl';
@@ -7,10 +7,10 @@ import { QuickAmounts } from '../components/QuickAmounts';
 import { ChequePreview } from '../components/ChequePreview';
 import { HistoryList } from '../components/HistoryList';
 import { LocaleToggle } from '../components/LocaleToggle';
-import { numberToChinese } from '../utils/numberToChinese';
-import { numberToEnglish } from '../utils/numberToEnglish';
 import { useHistory } from '../hooks/useHistory';
-import { parseAmount } from '../schemas/amount';
+import { useAmountInputState } from '../hooks/useAmountInputState';
+import { useAmountUrlSync, useInitialAmountFromUrl } from '../hooks/useAmountUrlSync';
+import { useChequeConversion } from '../hooks/useChequeConversion';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export default function Home() {
@@ -18,46 +18,14 @@ export default function Home() {
   const t = useTranslations();
   const { locale } = useLanguage();
   const { history, addToHistory, removeFromHistory, clearHistory } = useHistory();
-
-  // Get initial amount from URL
-  const initialAmount = useMemo(() => {
-    if (!router.isReady) return 0;
-    return parseAmount(router.query.amount) ?? 0;
-  }, [router.isReady, router.query.amount]);
-
-  const [amount, setAmount] = useState<number>(() => initialAmount);
-  const [inputValue, setInputValue] = useState<string>(() =>
-    initialAmount === 0 ? '' : initialAmount.toString()
+  const initialAmount = useInitialAmountFromUrl(router);
+  const { amount, inputValue, updateAmount, handleInputChange, handleInputBlur } =
+    useAmountInputState(initialAmount);
+  useAmountUrlSync(router, amount);
+  const { chineseText, englishText, error } = useChequeConversion(
+    amount,
+    t('home.conversionError')
   );
-
-  // Derived state - compute conversion from amount
-  const { chineseText, englishText, error } = useMemo(() => {
-    if (amount === 0) {
-      return { chineseText: '', englishText: '', error: '' };
-    }
-    try {
-      return {
-        chineseText: numberToChinese(amount),
-        englishText: numberToEnglish(amount),
-        error: '',
-      };
-    } catch (err) {
-      return {
-        chineseText: '',
-        englishText: '',
-        error: err instanceof Error ? err.message : t('home.conversionError'),
-      };
-    }
-  }, [amount, t]);
-
-  // Sync URL with amount state
-  useEffect(() => {
-    if (amount === 0) {
-      router.replace('/', undefined, { shallow: true });
-    } else {
-      router.replace(`?amount=${amount}`, undefined, { shallow: true });
-    }
-  }, [amount, router]);
 
   // Debounced history addition
   useEffect(() => {
@@ -69,37 +37,6 @@ export default function Home() {
 
     return () => clearTimeout(timeoutId);
   }, [amount, chineseText, englishText, addToHistory]);
-
-  // Update URL params when amount changes
-  const updateAmount = useCallback((newAmount: number) => {
-    setAmount(newAmount);
-    setInputValue(newAmount === 0 ? '' : newAmount.toString());
-  }, []);
-
-  const handleInputChange = (value: string) => {
-    setInputValue(value);
-
-    if (value === '' || value === '.') {
-      setAmount(0);
-      return;
-    }
-
-    const validated = parseAmount(value);
-    if (validated !== null) {
-      setAmount(validated);
-    }
-  };
-
-  const handleInputBlur = () => {
-    if (inputValue === '' || inputValue === '.') {
-      setInputValue('');
-      setAmount(0);
-    } else {
-      const formatted = parseFloat(inputValue).toFixed(2);
-      setInputValue(formatted);
-      setAmount(parseFloat(formatted));
-    }
-  };
 
   const handlePresetSelect = (value: number) => {
     updateAmount(value);

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslations } from 'next-intl';
+import { CopyButton } from './CopyButton';
+import { useChequeConversion } from '../hooks/useChequeConversion';
 
 interface ChequePreviewProps {
   chinese: string;
@@ -7,37 +9,9 @@ interface ChequePreviewProps {
   amount: number;
 }
 
-function CopyButton({ value, text }: { value: string; text: string }) {
-  const [copied, setCopied] = useState(false);
-  const t = useTranslations();
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleCopy}
-      disabled={!value}
-      className={`
-        px-2 py-1 text-xs font-medium rounded transition-all
-        ${copied ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}
-        disabled:opacity-50 disabled:cursor-not-allowed
-      `}
-    >
-      {copied ? t('common.copied') : text}
-    </button>
-  );
-}
-
 export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) {
   const t = useTranslations();
+  const { chineseText: zeroChinese, englishText: zeroEnglish } = useChequeConversion(0);
 
   const today = new Date().toLocaleDateString('en-HK', {
     year: 'numeric',
@@ -45,7 +19,9 @@ export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) 
     day: 'numeric',
   });
 
-  const formattedAmount = amount > 0 ? `HKD ${amount.toFixed(2)}` : '';
+  const currencyPrefix = t('chequePreview.currencyPrefix');
+  const chinesePrefix = t('chequePreview.chinesePrefix');
+  const formattedAmount = amount > 0 ? `${currencyPrefix} ${amount.toFixed(2)}` : '';
 
   return (
     <div className="w-full bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border-2 border-amber-200 p-6 shadow-inner">
@@ -78,7 +54,7 @@ export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) 
           <div className="text-right">
             <div className="text-xs text-gray-400 mb-1">{t('chequePreview.amount')}</div>
             <div className="font-mono text-lg font-bold text-gray-800 border-b-2 border-gray-400 pb-1 min-w-[120px]">
-              {formattedAmount || 'HKD 0.00'}
+              {formattedAmount || `${currencyPrefix} 0.00`}
             </div>
           </div>
         </div>
@@ -87,18 +63,18 @@ export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) 
         <div>
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-gray-400">{t('chequePreview.amountInChinese')}</span>
-            <CopyButton value={chinese ? `港幣 ${chinese}` : ''} text={t('common.copy')} />
+            <CopyButton value={chinese ? `${chinesePrefix} ${chinese}` : ''} />
           </div>
           <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-lg font-medium">
             {chinese ? (
               <>
-                <span className="text-sm text-gray-500 mr-1">港幣</span>
+                <span className="text-sm text-gray-500 mr-1">{chinesePrefix}</span>
                 {chinese}
               </>
             ) : (
               <>
-                <span className="text-sm text-gray-500 mr-1">港幣</span>
-                零元正
+                <span className="text-sm text-gray-500 mr-1">{chinesePrefix}</span>
+                {zeroChinese}
               </>
             )}
           </div>
@@ -108,18 +84,18 @@ export function ChequePreview({ chinese, english, amount }: ChequePreviewProps) 
         <div>
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-gray-400">{t('chequePreview.amountInEnglish')}</span>
-            <CopyButton value={english ? `HKD ${english}` : ''} text={t('common.copy')} />
+            <CopyButton value={english ? `${currencyPrefix} ${english}` : ''} />
           </div>
           <div className="border-b border-gray-300 py-2 min-h-[28px] text-gray-800 text-lg font-medium">
             {english ? (
               <>
-                <span className="text-sm text-gray-500 mr-1">HKD</span>
+                <span className="text-sm text-gray-500 mr-1">{currencyPrefix}</span>
                 {english}
               </>
             ) : (
               <>
-                <span className="text-sm text-gray-500 mr-1">HKD</span>
-                Zero Dollars Only
+                <span className="text-sm text-gray-500 mr-1">{currencyPrefix}</span>
+                {zeroEnglish}
               </>
             )}
           </div>

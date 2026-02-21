@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslations } from 'next-intl';
+import { CopyButton } from './CopyButton';
 
 interface ConversionResultProps {
   label: string;
@@ -8,36 +9,19 @@ interface ConversionResultProps {
 }
 
 export function ConversionResult({ label, value, language }: ConversionResultProps) {
-  const [copied, setCopied] = useState(false);
   const t = useTranslations();
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
-    }
-  };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-gray-600">{label}</span>
-        <button
-          onClick={handleCopy}
-          disabled={!value}
-          className={`
+        <CopyButton
+          value={value}
+          className="
             px-3 py-1 text-xs font-medium rounded-md transition-all
-            ${
-              copied ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }
             disabled:opacity-50 disabled:cursor-not-allowed
-          `}
-        >
-          {copied ? t('common.copied') : t('common.copy')}
-        </button>
+          "
+        />
       </div>
       <p
         className={`

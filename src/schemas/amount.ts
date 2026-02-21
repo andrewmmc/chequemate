@@ -1,6 +1,7 @@
 import { z } from 'zod';
+import { MAX_AMOUNT as DOMAIN_MAX_AMOUNT, roundToCents } from '../domain/amount';
 
-export const MAX_AMOUNT = 99999999999.99;
+export const MAX_AMOUNT = DOMAIN_MAX_AMOUNT;
 
 export const amountSchema = z
   .string()
@@ -13,7 +14,7 @@ export const amountSchema = z
     })
   )
   .refine((val) => val >= 0 && val <= MAX_AMOUNT, 'Amount out of range')
-  .transform((val) => Math.round(val * 100) / 100); // Round to 2 decimal places
+  .transform((val) => roundToCents(val));
 
 export function parseAmount(value: string | string[] | undefined): number | null {
   if (!value) return null;

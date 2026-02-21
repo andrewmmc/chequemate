@@ -3,6 +3,7 @@
  * Converts numerical amounts to Traditional Chinese text format used on HK cheques
  * Supports amounts up to HKD 99,999,999,999.99 (玖佰玖拾玖億玖仟玖佰玖拾玖萬玖仟玖佰玖拾玖元玖角玖分)
  */
+import { MAX_AMOUNT, isAmountInRange, splitAmount } from '../domain/amount';
 
 // Traditional Chinese numerals for cheque use
 const CHINESE_DIGITS = ['零', '壹', '貳', '參', '肆', '伍', '陸', '柒', '捌', '玖'];
@@ -119,14 +120,11 @@ export function numberToChinese(amount: number): string {
     throw new Error('金額不能為負數');
   }
 
-  if (amount > 99999999999.99) {
+  if (amount > MAX_AMOUNT) {
     throw new Error('金額不能超過玖佰玖拾玖億玖仟玖佰玖拾玖萬玖仟玖佰玖拾玖元玖角玖分');
   }
 
-  // Round to 2 decimal places and split into dollars and cents
-  const roundedAmount = Math.round(amount * 100) / 100;
-  const dollars = Math.floor(roundedAmount);
-  const cents = Math.round((roundedAmount - dollars) * 100);
+  const { dollars, cents } = splitAmount(amount);
 
   let result = '';
 
@@ -152,5 +150,5 @@ export function numberToChinese(amount: number): string {
  * Validates if the amount is within acceptable range for HK cheques
  */
 export function isValidAmount(amount: number): boolean {
-  return amount >= 0 && amount <= 99999999999.99;
+  return isAmountInRange(amount);
 }
