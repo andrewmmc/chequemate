@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
+import { MAX_AMOUNT } from '../domain/amount';
 
 interface AmountInputProps {
   value: string;
@@ -11,17 +12,20 @@ export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
   const t = useTranslations();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
+    const inputValue = e.target.value.replace(/,/g, '');
 
-    // Allow empty input
     if (inputValue === '') {
       onChange('');
       return;
     }
 
-    // Validate numeric input with optional decimal
     const regex = /^\d*\.?\d{0,2}$/;
     if (!regex.test(inputValue)) {
+      return;
+    }
+
+    const numValue = parseFloat(inputValue);
+    if (!isNaN(numValue) && numValue > MAX_AMOUNT) {
       return;
     }
 
@@ -32,15 +36,21 @@ export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
     <div className="w-full">
       <label
         htmlFor="amount"
-        className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2"
+        className="block text-xs font-semibold uppercase tracking-[0.1em] mb-3 text-ink-muted"
       >
         {t('amountInput.label')}
       </label>
+
       <div className="relative">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-          <span className="text-gray-400 font-medium text-sm">HKD</span>
-          <div className="w-px h-5 bg-gray-200"></div>
+        {/* Currency prefix */}
+        <div
+          className="absolute left-0 top-0 bottom-0 flex items-center pl-5 pr-0 select-none pointer-events-none"
+          aria-hidden="true"
+        >
+          <span className="text-sm font-semibold tracking-wide text-gold font-mono">HKD</span>
+          <div className="w-px h-6 ml-4 bg-border-mid" />
         </div>
+
         <input
           id="amount"
           type="text"
@@ -49,17 +59,43 @@ export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
           onChange={handleChange}
           onBlur={onBlur}
           placeholder="0.00"
-          className="w-full pl-20 pr-4 py-4 text-3xl font-semibold text-gray-900 bg-gray-50 rounded-xl border-2 border-transparent focus:border-blue-500 focus:bg-white outline-none transition-all placeholder:text-gray-300"
-          style={{ letterSpacing: '-0.02em' }}
+          autoComplete="off"
+          className="w-full pl-[5.5rem] pr-12 py-4 text-[2rem] font-semibold font-mono tracking-tight text-ink bg-white border border-cm-border rounded-xl outline-none transition-all placeholder:text-ink-muted/40 focus:border-gold-mid focus:shadow-[0_0_0_3px_rgba(196,138,20,0.15)]"
         />
+
+        {/* Clear button */}
+        {value !== '' && (
+          <button
+            type="button"
+            aria-label="Clear amount"
+            onMouseDown={(e) => {
+              e.preventDefault(); // keep input focused
+              onChange('');
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-full bg-paper-warm text-ink-muted hover:bg-border hover:text-ink transition-all cursor-pointer focus-visible:outline-none"
+          >
+            <svg
+              className="w-3.5 h-3.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              aria-hidden="true"
+            >
+              <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        )}
       </div>
-      <p className="mt-2 text-xs text-gray-400 flex items-center gap-1">
+
+      <p className="mt-2.5 text-xs flex items-center gap-1.5 text-ink-muted">
         <svg
-          className="w-3.5 h-3.5"
+          className="w-3.5 h-3.5 flex-shrink-0"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"
+          aria-hidden="true"
         >
           <circle cx="12" cy="12" r="10" />
           <path d="M12 16v-4m0-4h.01" strokeLinecap="round" />

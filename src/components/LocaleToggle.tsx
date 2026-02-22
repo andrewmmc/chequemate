@@ -6,26 +6,38 @@ export function LocaleToggle() {
   const { locale, setLocale } = useLanguage();
 
   return (
-    <div className="flex items-center p-1 bg-gray-100/80 rounded-lg">
+    <div
+      role="group"
+      aria-label="Language / 語言"
+      className="flex items-center p-1 rounded-lg bg-paper-warm border border-cm-border"
+    >
       <button
         onClick={() => setLocale('zh-HK')}
+        aria-pressed={locale === 'zh-HK'}
         className={`
-          relative px-3 py-1.5 text-sm font-medium rounded-md transition-all
-          ${locale === 'zh-HK' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}
+          relative px-3 py-1.5 text-sm font-medium rounded-md transition-all focus-visible:outline-none
+          ${
+            locale === 'zh-HK'
+              ? 'bg-white text-ink border border-cm-border shadow-[0_1px_3px_rgba(0,0,0,0.1)]'
+              : 'text-ink-muted hover:text-ink-soft border border-transparent'
+          }
         `}
       >
-        {locale === 'zh-HK' && <span className="absolute inset-0 bg-white rounded-md shadow-sm" />}
-        <span className="relative z-10">中文</span>
+        中文
       </button>
       <button
         onClick={() => setLocale('en')}
+        aria-pressed={locale === 'en'}
         className={`
-          relative px-3 py-1.5 text-sm font-medium rounded-md transition-all
-          ${locale === 'en' ? 'text-gray-900' : 'text-gray-500 hover:text-gray-700'}
+          relative px-3 py-1.5 text-sm font-medium rounded-md transition-all focus-visible:outline-none
+          ${
+            locale === 'en'
+              ? 'bg-white text-ink border border-cm-border shadow-[0_1px_3px_rgba(0,0,0,0.1)]'
+              : 'text-ink-muted hover:text-ink-soft border border-transparent'
+          }
         `}
       >
-        {locale === 'en' && <span className="absolute inset-0 bg-white rounded-md shadow-sm" />}
-        <span className="relative z-10">EN</span>
+        EN
       </button>
     </div>
   );

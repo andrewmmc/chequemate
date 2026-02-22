@@ -20,27 +20,28 @@ export function QuickAmounts({ onSelect, currentValue }: QuickAmountsProps) {
 
   return (
     <div className="w-full">
-      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2.5">
+      <p
+        className="text-xs font-semibold uppercase tracking-[0.1em] mb-3 text-ink-muted"
+        id="quick-amounts-label"
+      >
         {t('quickAmounts.label')}
-      </label>
-      <div className="flex flex-wrap gap-2">
-        {PRESETS.map((preset, index) => {
+      </p>
+      <div className="flex flex-wrap gap-2" role="group" aria-labelledby="quick-amounts-label">
+        {PRESETS.map((preset) => {
           const isSelected = currentValue === preset.value;
           return (
             <button
               key={preset.value}
               onClick={() => onSelect(preset.value)}
+              aria-pressed={isSelected}
               className={`
-                px-4 py-2 rounded-full text-sm font-medium transition-all active:scale-95
+                px-4 py-1.5 rounded-full text-sm font-medium font-mono border transition-all active:scale-95 focus-visible:outline-none cursor-pointer
                 ${
                   isSelected
-                    ? 'bg-blue-500 text-white shadow-sm'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 active:bg-gray-300'
+                    ? 'bg-gold text-white border-gold shadow-[0_2px_8px_rgba(146,102,12,0.25)]'
+                    : 'bg-paper-warm text-ink-soft border-cm-border hover:border-gold-mid hover:text-gold'
                 }
               `}
-              style={{
-                animationDelay: `${index * 0.03}s`,
-              }}
             >
               {preset.label}
             </button>
