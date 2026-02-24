@@ -1,14 +1,23 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { MAX_AMOUNT } from '../domain/amount';
+import { Currency } from '../domain/currency';
 
 interface AmountInputProps {
   value: string;
   onChange: (value: string) => void;
   onBlur: () => void;
+  currency: Currency;
+  onCurrencyChange: (currency: Currency) => void;
 }
 
-export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
+export function AmountInput({
+  value,
+  onChange,
+  onBlur,
+  currency,
+  onCurrencyChange,
+}: AmountInputProps) {
   const t = useTranslations();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,13 +51,35 @@ export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
       </label>
 
       <div className="relative">
-        {/* Currency prefix */}
-        <div
-          className="absolute left-0 top-0 bottom-0 flex items-center pl-5 pr-0 select-none pointer-events-none"
-          aria-hidden="true"
-        >
-          <span className="text-sm font-semibold tracking-wide text-gold font-mono">HKD</span>
-          <div className="w-px h-6 ml-4 bg-border-mid" />
+        {/* Currency selector */}
+        <div className="absolute left-0 top-0 bottom-0 flex items-center pl-4">
+          <div className="relative flex items-center">
+            <select
+              value={currency}
+              onChange={(e) => onCurrencyChange(e.target.value as Currency)}
+              aria-label="Select currency"
+              className="appearance-none bg-transparent text-sm font-semibold tracking-wide text-gold font-mono pl-1 pr-5 cursor-pointer focus-visible:outline-none"
+            >
+              <option value="HKD">HKD</option>
+              <option value="RMB">RMB</option>
+              <option value="USD">USD</option>
+            </select>
+            <svg
+              className="w-3 h-3 text-gold absolute right-0 pointer-events-none"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+          <div className="w-px h-6 ml-2 bg-border-mid" />
         </div>
 
         <input
@@ -60,7 +91,7 @@ export function AmountInput({ value, onChange, onBlur }: AmountInputProps) {
           onBlur={onBlur}
           placeholder="0.00"
           autoComplete="off"
-          className="w-full pl-[5.5rem] pr-12 py-4 text-[2rem] font-semibold font-mono tracking-tight text-ink bg-white border border-cm-border rounded-xl outline-none transition-all placeholder:text-ink-muted/40 focus:border-gold-mid focus:shadow-[0_0_0_3px_rgba(196,138,20,0.15)]"
+          className="w-full pl-[7rem] pr-12 py-4 text-[2rem] font-semibold font-mono tracking-tight text-ink bg-white border border-cm-border rounded-xl outline-none transition-all placeholder:text-ink-muted/40 focus:border-gold-mid focus:shadow-[0_0_0_3px_rgba(196,138,20,0.15)]"
         />
 
         {/* Clear button */}

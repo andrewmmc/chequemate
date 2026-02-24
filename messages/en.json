@@ -1,7 +1,7 @@
 {
   "common": {
     "copy": "Copy",
-    "copied": "Copied!"
+    "copied": "Copied"
   },
   "home": {
     "title": "Hong Kong Cheque Amount Converter",
@@ -9,8 +9,8 @@
     "disclaimer": "This application is for academic and educational purposes only, provided \"as is\" without any warranty. The developer shall not be liable for any loss or damage arising from the use of this application."
   },
   "amountInput": {
-    "label": "Amount (HKD)",
-    "maxHint": "Maximum: HKD 99,999,999,999.99"
+    "label": "Amount",
+    "maxHint": "Maximum: 99,999,999,999.99"
   },
   "quickAmounts": {
     "label": "Quick Amounts"

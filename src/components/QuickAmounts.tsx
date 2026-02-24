@@ -1,23 +1,37 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Currency } from '../domain/currency';
 
 interface QuickAmountsProps {
   onSelect: (amount: number) => void;
   currentValue: number;
+  currency: Currency;
 }
 
+const CURRENCY_SYMBOL: Record<Currency, string> = {
+  HKD: '$',
+  RMB: '¥',
+  USD: '$',
+};
+
 const PRESETS = [
-  { label: '$100', value: 100 },
-  { label: '$500', value: 500 },
-  { label: '$1K', value: 1000 },
-  { label: '$5K', value: 5000 },
-  { label: '$10K', value: 10000 },
-  { label: '$50K', value: 50000 },
+  { value: 100 },
+  { value: 500 },
+  { value: 1000, shortLabel: '1K' },
+  { value: 5000, shortLabel: '5K' },
+  { value: 10000, shortLabel: '10K' },
+  { value: 50000, shortLabel: '50K' },
 ];
 
-export function QuickAmounts({ onSelect, currentValue }: QuickAmountsProps) {
+function formatPresetLabel(symbol: string, preset: (typeof PRESETS)[number]): string {
+  if ('shortLabel' in preset) return `${symbol}${preset.shortLabel}`;
+  return `${symbol}${preset.value}`;
+}
+
+export function QuickAmounts({ onSelect, currentValue, currency }: QuickAmountsProps) {
   const t = useTranslations();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const symbol = CURRENCY_SYMBOL[currency];
 
   return (
     <div className="w-full">
@@ -42,6 +56,7 @@ export function QuickAmounts({ onSelect, currentValue }: QuickAmountsProps) {
         <div id="quick-amounts-group" className="flex flex-wrap gap-2" role="group">
           {PRESETS.map((preset) => {
             const isSelected = currentValue === preset.value;
+            const label = formatPresetLabel(symbol, preset);
             return (
               <button
                 key={preset.value}
@@ -56,7 +71,7 @@ export function QuickAmounts({ onSelect, currentValue }: QuickAmountsProps) {
                   }
                 `}
               >
-                {preset.label}
+                {label}
               </button>
             );
           })}

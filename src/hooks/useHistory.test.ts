@@ -18,7 +18,9 @@ describe('useHistory', () => {
         {
           id: 'test-id-1',
           amount: 100,
+          currency: 'HKD',
           chinese: '壹佰元正',
+          simplifiedChinese: '',
           english: 'One Hundred Dollars Only',
           timestamp: Date.now(),
         },
@@ -27,6 +29,23 @@ describe('useHistory', () => {
 
       const { result } = renderHook(() => useHistory());
       expect(result.current.history).toEqual(existingHistory);
+    });
+
+    it('migrates legacy entries without currency or simplifiedChinese', () => {
+      const legacyHistory = [
+        {
+          id: 'legacy-id-1',
+          amount: 100,
+          chinese: '壹佰元正',
+          english: 'One Hundred Dollars Only',
+          timestamp: Date.now(),
+        },
+      ];
+      localStorage.setItem('cheque-converter-history', JSON.stringify(legacyHistory));
+
+      const { result } = renderHook(() => useHistory());
+      expect(result.current.history[0].currency).toBe('HKD');
+      expect(result.current.history[0].simplifiedChinese).toBe('');
     });
 
     it('handles corrupted localStorage data gracefully', () => {
@@ -45,23 +64,24 @@ describe('useHistory', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
 
       expect(result.current.history).toHaveLength(1);
       expect(result.current.history[0].amount).toBe(100);
-      expect(result.current.history[0].chinese).toBe('港幣壹佰元正');
-      expect(result.current.history[0].english).toBe('Hong Kong Dollars One Hundred Only');
+      expect(result.current.history[0].currency).toBe('HKD');
+      expect(result.current.history[0].chinese).toBe('壹佰元正');
+      expect(result.current.history[0].english).toBe('One Hundred Dollars Only');
     });
 
     it('prepends new entry to beginning', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
       act(() => {
-        result.current.addToHistory(200, '港幣貳佰元正', 'Hong Kong Dollars Two Hundred Only');
+        result.current.addToHistory(200, 'HKD', '貳佰元正', '', 'Two Hundred Dollars Only');
       });
 
       expect(result.current.history).toHaveLength(2);
@@ -69,17 +89,30 @@ describe('useHistory', () => {
       expect(result.current.history[1].amount).toBe(100);
     });
 
-    it('deduplicates by amount', () => {
+    it('deduplicates by amount and currency', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
 
       expect(result.current.history).toHaveLength(1);
+    });
+
+    it('does not deduplicate same amount with different currency', () => {
+      const { result } = renderHook(() => useHistory());
+
+      act(() => {
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
+      });
+      act(() => {
+        result.current.addToHistory(100, 'USD', '', '', 'One Hundred Dollars Only');
+      });
+
+      expect(result.current.history).toHaveLength(2);
     });
 
     it('limits history to 10 entries', () => {
@@ -87,7 +120,7 @@ describe('useHistory', () => {
 
       act(() => {
         for (let i = 1; i <= 15; i++) {
-          result.current.addToHistory(i, `港幣${i}元正`, `Hong Kong Dollars ${i} Only`);
+          result.current.addToHistory(i, 'HKD', `${i}元正`, '', `${i} Dollars Only`);
         }
       });
 
@@ -100,7 +133,7 @@ describe('useHistory', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
 
       const stored = JSON.parse(localStorage.getItem('cheque-converter-history') || '[]');
@@ -114,7 +147,7 @@ describe('useHistory', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
 
       const entryId = result.current.history[0].id;
@@ -130,7 +163,7 @@ describe('useHistory', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
 
       act(() => {
@@ -144,7 +177,7 @@ describe('useHistory', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
 
       const entryId = result.current.history[0].id;
@@ -163,8 +196,8 @@ describe('useHistory', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
-        result.current.addToHistory(200, '港幣貳佰元正', 'Hong Kong Dollars Two Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
+        result.current.addToHistory(200, 'HKD', '貳佰元正', '', 'Two Hundred Dollars Only');
       });
 
       expect(result.current.history).toHaveLength(2);
@@ -180,7 +213,7 @@ describe('useHistory', () => {
       const { result } = renderHook(() => useHistory());
 
       act(() => {
-        result.current.addToHistory(100, '港幣壹佰元正', 'Hong Kong Dollars One Hundred Only');
+        result.current.addToHistory(100, 'HKD', '壹佰元正', '', 'One Hundred Dollars Only');
       });
 
       act(() => {

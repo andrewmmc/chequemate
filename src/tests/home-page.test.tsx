@@ -27,7 +27,9 @@ const clearHistory = vi.fn();
 let history = [] as Array<{
   id: string;
   amount: number;
+  currency: 'HKD' | 'RMB' | 'USD';
   chinese: string;
+  simplifiedChinese: string;
   english: string;
   timestamp: number;
 }>;
@@ -93,10 +95,16 @@ describe('Home page flows', () => {
     );
 
     act(() => {
-      vi.advanceTimersByTime(500);
+      vi.advanceTimersByTime(1500);
     });
 
-    expect(addToHistory).toHaveBeenCalledWith(100, '壹佰元正', 'One Hundred Dollars Only');
+    expect(addToHistory).toHaveBeenCalledWith(
+      100,
+      'HKD',
+      '壹佰元正',
+      '壹佰元整',
+      'One Hundred Dollars Only'
+    );
 
     fireEvent.blur(input);
     expect((input as HTMLInputElement).value).toBe('100.00');
@@ -109,13 +117,18 @@ describe('Home page flows', () => {
       {
         id: '1',
         amount: 200,
+        currency: 'HKD',
         chinese: '貳佰元正',
+        simplifiedChinese: '',
         english: 'Two Hundred Dollars Only',
         timestamp: Date.now(),
       },
     ];
 
     render(<Home />);
+
+    // QuickAmounts is collapsed by default — expand it first
+    fireEvent.click(screen.getByRole('button', { name: /quickAmounts\.label/i }));
 
     fireEvent.click(screen.getByRole('button', { name: '$100' }));
     expect(router.replace).toHaveBeenCalledWith(
@@ -124,7 +137,7 @@ describe('Home page flows', () => {
       { shallow: true }
     );
 
-    fireEvent.click(screen.getByText('HKD 200.00'));
+    fireEvent.click(screen.getByRole('button', { name: /Select 港幣 200\.00/ }));
     expect(router.replace).toHaveBeenCalledWith(
       { pathname: '/', query: { amount: '200' } },
       undefined,

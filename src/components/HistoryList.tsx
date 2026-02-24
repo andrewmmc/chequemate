@@ -1,12 +1,25 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import { HistoryEntry } from '../hooks/useHistory';
+import { Currency } from '../domain/currency';
 
 interface HistoryListProps {
   history: HistoryEntry[];
-  onSelect: (amount: number) => void;
+  onSelect: (amount: number, currency: Currency) => void;
   onRemove: (id: string) => void;
   onClear: () => void;
+}
+
+const CURRENCY_DISPLAY_NAME: Record<Currency, string> = {
+  HKD: '港幣',
+  RMB: '人民币',
+  USD: 'USD',
+};
+
+function getEntryPreviewText(entry: HistoryEntry): string {
+  if (entry.currency === 'RMB') return entry.simplifiedChinese;
+  if (entry.currency === 'USD') return entry.english;
+  return entry.chinese;
 }
 
 export function HistoryList({ history, onSelect, onRemove, onClear }: HistoryListProps) {
@@ -91,22 +104,29 @@ export function HistoryList({ history, onSelect, onRemove, onClear }: HistoryLis
               key={entry.id}
               className="flex items-center justify-between px-5 py-3.5 hover:bg-paper-warm active:bg-paper-warm/80 cursor-pointer transition-colors group animate-slide-in focus-visible:outline-none focus-visible:bg-paper-warm"
               style={{ animationDelay: `${index * 0.03}s` }}
-              onClick={() => onSelect(entry.amount)}
+              onClick={() => onSelect(entry.amount, entry.currency)}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  onSelect(entry.amount);
+                  onSelect(entry.amount, entry.currency);
                 }
               }}
-              aria-label={`Select HKD ${entry.amount.toLocaleString('en-HK', { minimumFractionDigits: 2 })}`}
+              aria-label={`Select ${CURRENCY_DISPLAY_NAME[entry.currency]} ${entry.amount.toLocaleString('en-HK', { minimumFractionDigits: 2 })}`}
             >
               <div className="flex-1 min-w-0">
-                <span className="text-sm font-semibold font-mono text-ink">
-                  HKD {entry.amount.toLocaleString('en-HK', { minimumFractionDigits: 2 })}
-                </span>
-                <p className="text-xs text-ink-muted truncate mt-0.5">{entry.chinese}</p>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-paper-warm text-ink-muted border border-cm-border">
+                    {CURRENCY_DISPLAY_NAME[entry.currency]}
+                  </span>
+                  <span className="text-sm font-semibold font-mono text-ink">
+                    {entry.amount.toLocaleString('en-HK', { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+                <p className="text-xs text-ink-muted truncate mt-0.5">
+                  {getEntryPreviewText(entry)}
+                </p>
               </div>
               <div className="flex items-center gap-3 ml-3 flex-shrink-0">
                 <span className="text-xs text-ink-muted font-mono">

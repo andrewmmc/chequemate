@@ -9,9 +9,15 @@ import { HistoryList } from '../components/HistoryList';
 import { LocaleToggle } from '../components/LocaleToggle';
 import { useHistory } from '../hooks/useHistory';
 import { useAmountInputState } from '../hooks/useAmountInputState';
-import { useAmountUrlSync, useInitialAmountFromUrl } from '../hooks/useAmountUrlSync';
+import {
+  useAmountUrlSync,
+  useInitialAmountFromUrl,
+  useInitialCurrencyFromUrl,
+  useCurrencyUrlSync,
+} from '../hooks/useAmountUrlSync';
 import { useChequeConversion } from '../hooks/useChequeConversion';
 import { useLanguage } from '../contexts/LanguageContext';
+import { Currency } from '../domain/currency';
 
 export default function Home() {
   const router = useRouter();
@@ -19,15 +25,18 @@ export default function Home() {
   const { locale } = useLanguage();
   const { history, addToHistory, removeFromHistory, clearHistory } = useHistory();
   const initialAmount = useInitialAmountFromUrl(router);
+  const currency = useInitialCurrencyFromUrl(router);
+  const setCurrency = useCurrencyUrlSync(router);
   const { amount, inputValue, updateAmount, handleInputChange, handleInputBlur } =
     useAmountInputState(initialAmount);
   useAmountUrlSync(router, amount);
-  const { chineseText, englishText, error } = useChequeConversion(
+  const { chineseText, simplifiedChineseText, englishText, error } = useChequeConversion(
     amount,
     t('home.conversionError')
   );
   const hasHydratedFromUrlRef = useRef(false);
 
+  // Hydrate amount from URL once router is ready
   useEffect(() => {
     if (!router.isReady || hasHydratedFromUrlRef.current) return;
     hasHydratedFromUrlRef.current = true;
@@ -36,23 +45,26 @@ export default function Home() {
 
   // Debounced history addition
   useEffect(() => {
-    if (amount === 0 || !chineseText || !englishText) return;
+    if (amount === 0 || error) return;
     const timeoutId = setTimeout(() => {
-      addToHistory(amount, chineseText, englishText);
-    }, 500);
+      addToHistory(amount, currency, chineseText, simplifiedChineseText, englishText);
+    }, 1500);
     return () => clearTimeout(timeoutId);
-  }, [amount, chineseText, englishText, addToHistory]);
+  }, [amount, currency, chineseText, simplifiedChineseText, englishText, error, addToHistory]);
 
   const handlePresetSelect = (value: number) => updateAmount(value);
-  const handleHistorySelect = (value: number) => updateAmount(value);
+  const handleHistorySelect = (value: number, historyCurrency: Currency) => {
+    setCurrency(historyCurrency);
+    updateAmount(value);
+  };
 
   return (
     <>
       <Head>
         <title>
           {locale === 'zh-HK'
-            ? '香港支票金額轉換器 - ChequeMate'
-            : 'Hong Kong Cheque Amount Converter - ChequeMate'}
+            ? '支票金額轉換器 - ChequeMate'
+            : 'Cheque Amount Converter - ChequeMate'}
         </title>
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </Head>
@@ -104,10 +116,16 @@ export default function Home() {
                 value={inputValue}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
+                currency={currency}
+                onCurrencyChange={setCurrency}
               />
             </div>
             <div className="border-t border-cm-border p-5 pt-4">
-              <QuickAmounts onSelect={handlePresetSelect} currentValue={amount} />
+              <QuickAmounts
+                onSelect={handlePresetSelect}
+                currentValue={amount}
+                currency={currency}
+              />
             </div>
           </section>
 
@@ -142,7 +160,12 @@ export default function Home() {
 
           {/* Cheque preview */}
           <section className="mb-4 animate-fade-in-up delay-2">
-            <ChequePreview chinese={chineseText} english={englishText} />
+            <ChequePreview
+              chinese={chineseText}
+              simplifiedChinese={simplifiedChineseText}
+              english={englishText}
+              currency={currency}
+            />
           </section>
 
           {/* History */}

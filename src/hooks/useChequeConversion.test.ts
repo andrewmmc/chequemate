@@ -7,6 +7,7 @@ describe('useChequeConversion', () => {
     const { result } = renderHook(() => useChequeConversion(0, 'Conversion error'));
     expect(result.current).toEqual({
       chineseText: '零元正',
+      simplifiedChineseText: '零元整',
       englishText: 'Zero Dollars Only',
       error: '',
     });
