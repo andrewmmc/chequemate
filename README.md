@@ -1,6 +1,6 @@
-# ChequeMate - 香港支票金額轉換器
+# ChequeMate - 支票金額轉換器
 
-A Hong Kong Cheque Amount Converter that converts numerical amounts to both Chinese and English text formats for cheque writing.
+A Cheque Amount Converter that converts numerical amounts to both Chinese and English text formats for cheque writing.
 
 **Demo:** [chq.mmc.dev](https://chq.mmc.dev)
 
@@ -11,9 +11,9 @@ A Hong Kong Cheque Amount Converter that converts numerical amounts to both Chin
 - Cheque preview with formatted output
 - Preset amounts for quick selection
 - Conversion history with local storage persistence
-- Support for amounts up to HKD 99,999,999,999.99
+- Support for amounts up to HKD/RMB/USD 99,999,999,999.99
 - Bilingual interface (Chinese/English) with locale persistence
-- URL parameter support for sharing conversions (`?amount=1234.56`)
+- URL parameter support for sharing conversions (`?amount=1234.56&currency=HKD`)
 
 ## Tech Stack
 
