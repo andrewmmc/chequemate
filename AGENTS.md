@@ -60,3 +60,10 @@ All components are in `src/components/` and follow a simple presentational patte
 - Vitest for testing with Testing Library
 - Husky for git hooks (pre-commit runs lint:fix and format)
 - URL parameter `?amount=` can pre-fill the amount for sharing
+
+## Cursor Cloud specific instructions
+
+- **Single service**: Only the Next.js dev server (`npm run dev`, port 3000) needs to run. No databases, Docker, or external services required.
+- **Pre-commit hook**: Husky runs `format:check`, `lint`, `typecheck`, and `test:run` on every commit. Ensure all four pass before committing.
+- **Tests don't need a running server**: `npm run test:run` uses jsdom and runs independently of the dev server.
+- **Node version**: The project works with Node 22.x (the default in the environment). No `.nvmrc` or version pinning exists.
