@@ -63,6 +63,7 @@ export function AmountInput({
               <option value="HKD">HKD</option>
               <option value="RMB">RMB</option>
               <option value="USD">USD</option>
+              <option value="GBP">GBP</option>
             </select>
             <svg
               className="w-3 h-3 text-gold absolute right-0 pointer-events-none"

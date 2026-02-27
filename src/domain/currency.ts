@@ -1,1 +1,1 @@
-export type Currency = 'HKD' | 'RMB' | 'USD';
+export type Currency = 'HKD' | 'RMB' | 'USD' | 'GBP';

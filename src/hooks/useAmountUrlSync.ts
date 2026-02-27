@@ -3,7 +3,7 @@ import { NextRouter } from 'next/router';
 import { parseAmount } from '../schemas/amount';
 import { Currency } from '../domain/currency';
 
-const VALID_CURRENCIES: Currency[] = ['HKD', 'RMB', 'USD'];
+const VALID_CURRENCIES: Currency[] = ['HKD', 'RMB', 'USD', 'GBP'];
 
 export function useInitialAmountFromUrl(router: NextRouter) {
   return useMemo(() => {

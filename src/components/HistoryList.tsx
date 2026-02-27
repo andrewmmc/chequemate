@@ -14,11 +14,12 @@ const CURRENCY_DISPLAY_NAME: Record<Currency, string> = {
   HKD: '港幣',
   RMB: '人民币',
   USD: 'USD',
+  GBP: 'GBP',
 };
 
 function getEntryPreviewText(entry: HistoryEntry): string {
   if (entry.currency === 'RMB') return entry.simplifiedChinese;
-  if (entry.currency === 'USD') return entry.english;
+  if (entry.currency === 'USD' || entry.currency === 'GBP') return entry.english;
   return entry.chinese;
 }
 
