@@ -12,6 +12,7 @@ const CURRENCY_SYMBOL: Record<Currency, string> = {
   HKD: '$',
   RMB: '¥',
   USD: '$',
+  GBP: '£',
 };
 
 const PRESETS = [

@@ -32,7 +32,8 @@ export default function Home() {
   useAmountUrlSync(router, amount);
   const { chineseText, simplifiedChineseText, englishText, error } = useChequeConversion(
     amount,
-    t('home.conversionError')
+    t('home.conversionError'),
+    currency
   );
   const hasHydratedFromUrlRef = useRef(false);
 

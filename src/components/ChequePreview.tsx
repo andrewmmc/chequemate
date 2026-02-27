@@ -3,6 +3,7 @@ import { Currency } from '../domain/currency';
 import { ChequePreviewHKD } from './ChequePreviewHKD';
 import { ChequePreviewRMB } from './ChequePreviewRMB';
 import { ChequePreviewUSD } from './ChequePreviewUSD';
+import { ChequePreviewGBP } from './ChequePreviewGBP';
 
 interface ChequePreviewProps {
   chinese: string;
@@ -22,6 +23,8 @@ export function ChequePreview({
       return <ChequePreviewRMB simplifiedChinese={simplifiedChinese} />;
     case 'USD':
       return <ChequePreviewUSD english={english} />;
+    case 'GBP':
+      return <ChequePreviewGBP english={english} />;
     case 'HKD':
     default:
       return <ChequePreviewHKD chinese={chinese} english={english} />;
