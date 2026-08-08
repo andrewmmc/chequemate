@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chq.mmc.dev/sitemap.xml

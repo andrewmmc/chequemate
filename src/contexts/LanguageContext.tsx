@@ -28,30 +28,23 @@ function getInitialLocale(): Locale {
 const emptySubscribe = () => () => {};
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => getInitialLocale());
+  const [selectedLocale, setSelectedLocale] = useState<Locale | null>(null);
 
   const mounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
     () => false
   );
+  const locale = mounted ? (selectedLocale ?? getInitialLocale()) : 'zh-HK';
 
   useEffect(() => {
     document.documentElement.lang = locale === 'zh-HK' ? 'zh-HK' : 'en';
   }, [locale]);
 
   const setLocale = (newLocale: Locale) => {
-    setLocaleState(newLocale);
+    setSelectedLocale(newLocale);
     setStorageItem('chequemate-locale', newLocale);
   };
-
-  if (!mounted) {
-    return (
-      <LanguageContext.Provider value={{ locale: 'zh-HK', setLocale: () => {} }}>
-        <div className="min-h-screen bg-gradient-to-b from-blue-50 to-gray-100" />
-      </LanguageContext.Provider>
-    );
-  }
 
   return (
     <LanguageContext.Provider value={{ locale, setLocale }}>{children}</LanguageContext.Provider>

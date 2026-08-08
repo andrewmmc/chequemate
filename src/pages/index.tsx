@@ -19,6 +19,46 @@ import { useChequeConversion } from '../hooks/useChequeConversion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Currency } from '../domain/currency';
 
+const SITE_URL = 'https://chq.mmc.dev/';
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}#website`,
+      url: SITE_URL,
+      name: 'ChequeMate',
+      description: 'Hong Kong cheque amount converter for Chinese and English cheque writing.',
+      inLanguage: ['zh-HK', 'en'],
+    },
+    {
+      '@type': 'WebApplication',
+      '@id': `${SITE_URL}#application`,
+      url: SITE_URL,
+      name: 'ChequeMate 支票金額轉換器',
+      applicationCategory: 'FinanceApplication',
+      operatingSystem: 'Any',
+      browserRequirements: 'Requires JavaScript',
+      description:
+        'Free cheque amount converter that converts HKD, RMB, USD and GBP amounts into Traditional Chinese, Simplified Chinese and English words.',
+      inLanguage: ['zh-HK', 'en'],
+      isAccessibleForFree: true,
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'HKD',
+      },
+      featureList: [
+        'Convert cheque amounts to Traditional Chinese words',
+        'Convert cheque amounts to Simplified Chinese words',
+        'Convert cheque amounts to English words',
+        'Support HKD, RMB, USD and GBP',
+      ],
+    },
+  ],
+};
+
 export default function Home() {
   const router = useRouter();
   const t = useTranslations();
@@ -58,16 +98,36 @@ export default function Home() {
     setCurrency(historyCurrency);
     updateAmount(value);
   };
+  const title =
+    locale === 'zh-HK'
+      ? '支票金額轉換器（中文大寫及英文）| ChequeMate'
+      : 'Cheque Amount Converter – Chinese & English | ChequeMate';
+  const description =
+    locale === 'zh-HK'
+      ? '免費將港幣、人民幣、美元及英鎊金額轉換成支票適用的中文大寫及英文寫法，支援繁體與簡體中文。'
+      : 'Free cheque amount converter for HKD, RMB, USD and GBP. Convert numbers into Traditional Chinese, Simplified Chinese and English cheque wording.';
 
   return (
     <>
       <Head>
-        <title>
-          {locale === 'zh-HK'
-            ? '支票金額轉換器 - ChequeMate'
-            : 'Cheque Amount Converter - ChequeMate'}
-        </title>
+        <title>{title}</title>
+        <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="robots" content="index, follow, max-image-preview:large" />
+        <link rel="canonical" href={SITE_URL} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="ChequeMate" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={SITE_URL} />
+        <meta property="og:locale" content={locale === 'zh-HK' ? 'zh_HK' : 'en_US'} />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
       </Head>
 
       <div className="min-h-screen bg-paper">
@@ -89,9 +149,9 @@ export default function Home() {
                   <path d="M2 10h20M6 14h4M14 14h4" strokeLinecap="round" />
                 </svg>
               </div>
-              <h1 className="text-lg font-semibold font-serif text-ink tracking-tight">
+              <div className="text-lg font-semibold font-serif text-ink tracking-tight">
                 ChequeMate
-              </h1>
+              </div>
             </div>
             <LocaleToggle />
           </div>
@@ -100,9 +160,9 @@ export default function Home() {
         <main className="max-w-2xl mx-auto px-4 pt-6 pb-20">
           {/* Page title */}
           <div className="mb-6 animate-fade-in-up">
-            <h2 className="text-2xl font-bold font-serif text-ink tracking-tight">
+            <h1 className="text-2xl font-bold font-serif text-ink tracking-tight">
               {t('home.title')}
-            </h2>
+            </h1>
             <p className="text-sm text-ink-muted mt-1">
               {locale === 'zh-HK'
                 ? '輸入金額，自動轉換為中英文大寫'
